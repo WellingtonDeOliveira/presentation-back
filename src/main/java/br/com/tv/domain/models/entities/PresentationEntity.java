@@ -1,6 +1,5 @@
 package br.com.tv.domain.models.entities;
 
-import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.shared.models.entities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,14 +12,14 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_files")
-public class FilesEntity extends BaseEntity {
+@Table(name = "tb_presentation")
+public class PresentationEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "route", nullable = false)
-    private String route;
+    @Column(name = "time", nullable = false)
+    private String time;
 
     @Column(name = "type", nullable = false, length = 20)
     private String type;
@@ -29,10 +28,7 @@ public class FilesEntity extends BaseEntity {
     private OffsetDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "users_id")
-    private UserEntity user;
+    @JoinColumn(name = "tv_id")
+    private TvEntity tv;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "presentation_id")
-    private PresentationEntity presentation;
 }
