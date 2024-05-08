@@ -9,6 +9,7 @@ import br.com.tv.controllers.files.v1.annotations.DeleteFileEndpoint;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.domain.services.FileService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,13 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.UUID;
 
 @OpenApiController(name = "Files")
+@AllArgsConstructor
 @ApiController(path = "/v1/files")
 public class FileController {
     private final FileService fileService;
-
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
 
     @GetFilesEndpoint
     public ResponseEntity<GetFileResponseDTO> search(@ModelAttribute GetFileRequestDTO request) {
