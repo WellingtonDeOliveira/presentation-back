@@ -15,12 +15,10 @@ public record GetUserRolesRecordsDTO(
         @Schema(description = "Last update date.", example = "2000-01-01T00:00:00Z")
         OffsetDateTime updatedAt,
         @Schema(description = "Role.")
-        RoleType role,
-        @Schema(description = "Campus.")
-        String campus
+        RoleType role
 ) {
     public GetUserRolesRecordsDTO(Builder builder) {
-        this(builder.id, builder.createdAt, builder.updatedAt, builder.role, builder.campus);
+        this(builder.id, builder.createdAt, builder.updatedAt, builder.role);
     }
 
     public static Builder builder() {
@@ -32,15 +30,9 @@ public record GetUserRolesRecordsDTO(
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private RoleType role;
-        private String campus;
 
         public Builder id(UUID id) {
             this.id = id;
-            return this;
-        }
-
-        public Builder campus(String campus) {
-            this.campus = campus;
             return this;
         }
 

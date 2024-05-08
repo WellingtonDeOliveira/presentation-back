@@ -1,8 +1,6 @@
 package br.com.base.authentication.domain.services;
 
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.CreateUserRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesResponseDTO;
+import br.com.base.authentication.api.controllers.user.v1.models.DTOs.*;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.models.enums.RoleType;
 
@@ -13,6 +11,8 @@ import java.util.UUID;
 public interface UserService {
 
     void create(CreateUserRequestDTO request);
+
+    GetUserResponseDTO search(GetUserRequestDTO request);
 
     void checkUserExistOrThrowException(UUID userId) throws EntityNotFoundException;
 

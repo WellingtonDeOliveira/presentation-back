@@ -1,10 +1,8 @@
 package br.com.base.authentication.api.controllers.user.v1;
 
 import br.com.base.authentication.api.controllers.user.v1.annotations.*;
+import br.com.base.authentication.api.controllers.user.v1.models.DTOs.*;
 import br.com.base.authentication.domain.services.UserService;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.CreateUserRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesResponseDTO;
 import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
 import br.com.base.shared.models.enums.RoleType;
@@ -27,6 +25,12 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetUsersEndpoint
+    public ResponseEntity<GetUserResponseDTO> search(@ModelAttribute GetUserRequestDTO request) {
+        var response = userService.search(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @CreateUserEndpoint

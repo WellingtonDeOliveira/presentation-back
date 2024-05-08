@@ -1,9 +1,6 @@
 package br.com.base.authentication.domain.services.impl;
 
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.CreateUserRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesRecordsDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesRequestDTO;
-import br.com.base.authentication.api.controllers.user.v1.models.DTOs.GetUserRolesResponseDTO;
+import br.com.base.authentication.api.controllers.user.v1.models.DTOs.*;
 import br.com.base.authentication.domain.models.entities.GroupRoleEntity;
 import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.authentication.domain.models.entities.UserLinkGroupRoleEntity;
@@ -15,6 +12,8 @@ import br.com.base.authentication.domain.repositories.UserRepository;
 import br.com.base.authentication.domain.services.UserService;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.models.enums.RoleType;
+import br.com.base.shared.utils.StringUtil;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -96,6 +95,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public GetUserResponseDTO search(GetUserRequestDTO request) {
+        var pageable = request.buildPageable();
+
+        var page = userRepository.search(request.getSearch(), pageable);
+
+        if (page.isEmpty()) {
+            page = userRepository.search(StringUtil.like(request.getSearch()), pageable);
+        }
+        return parseToUserPageableResultDTO(page);
+    }
+
+    private GetUserResponseDTO parseToUserPageableResultDTO(Page<UserEntity> result) {
+        List<GetUserRecordsDTO> content = result.getContent().stream()
+                .map(user -> GetUserRecordsDTO.builder()
+                        .userId(user.getId())
+                        .username(user.getUsername())
+                        .campus(user.getCampus())
+                        .groups(user.getGroupsNames())
+                        .build()).toList();
+        var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
+        return new GetUserResponseDTO(page);
+    }
+
+    @Override
     public void checkUserExistOrThrowException(UUID userId) throws EntityNotFoundException {
         boolean exists = userRepository.existsById(userId);
         if (exists)
@@ -125,7 +148,6 @@ public class UserServiceImpl implements UserService {
                         .createdAt(e.getCreatedAt())
                         .updatedAt(e.getUpdatedAt())
                         .role(e.getRole())
-                        .campus(e.getUser().getCampus())
                         .build()
         ).toList();
 

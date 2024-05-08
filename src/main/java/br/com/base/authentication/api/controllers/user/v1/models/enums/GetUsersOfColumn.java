@@ -2,15 +2,16 @@ package br.com.base.authentication.api.controllers.user.v1.models.enums;
 
 import br.com.base.shared.models.enums.SortColumn;
 
-public enum GetRolesOfUserColumn implements SortColumn {
+public enum GetUsersOfColumn implements SortColumn {
     id("id"),
     createdAt("createdAt"),
+    campus("campus"),
     updatedAt("updatedAt"),
-    role("role");
+    username("username");
 
     private final String column;
 
-    GetRolesOfUserColumn(String column) {
+    GetUsersOfColumn(String column) {
         this.column = column;
     }
 
