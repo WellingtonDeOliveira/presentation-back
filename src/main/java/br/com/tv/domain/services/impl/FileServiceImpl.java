@@ -59,9 +59,9 @@ public class FileServiceImpl implements FileService {
                                     .deletedAt(file.getDeletedAt())
                                     .createdAt(file.getCreatedAt())
                                     .name(file.getName())
-                                    .route(file.getRoute())
+                                    .route(file.getRef())
                                     .type(file.getType())
-                                    .file(Files.readAllBytes(getFilePathByDateAndName(file.getCreatedAt(), file.getRoute())))
+                                    .file(Files.readAllBytes(getFilePathByDateAndName(file.getCreatedAt(), file.getRef())))
                                     .build();
                         } catch (IOException e) {
                             throw new BusinessException(e.getMessage());
@@ -102,7 +102,7 @@ public class FileServiceImpl implements FileService {
                         .builder()
                         .name(name)
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
-                        .route(ref)
+                        .ref(ref)
                         .deletedAt(request.deletedAt())
                         .type(file.getContentType())
                         .build()
@@ -110,7 +110,7 @@ public class FileServiceImpl implements FileService {
             }
             filesRepository.saveAll(entities);
         } catch (Exception e) {
-            deleteByRefNames(entities.stream().map(FilesEntity::getRoute).toList());
+            deleteByRefNames(entities.stream().map(FilesEntity::getRef).toList());
             throw new BusinessException(e.getMessage());
         }
     }
@@ -119,7 +119,7 @@ public class FileServiceImpl implements FileService {
     public void delete(UUID fileId) {
         try {
             FilesEntity file = findById(fileId);
-            Path path = getFilePathByDateAndFilename(file.getCreatedAt(), file.getRoute());
+            Path path = getFilePathByDateAndFilename(file.getCreatedAt(), file.getRef());
             Files.delete(path);
 
             filesRepository.deleteById(fileId);

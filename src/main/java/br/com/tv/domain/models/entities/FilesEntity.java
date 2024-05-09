@@ -19,8 +19,8 @@ public class FilesEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "route", nullable = false)
-    private String route;
+    @Column(name = "ref_name", nullable = false)
+    private String ref;
 
     @Column(name = "type", nullable = false, length = 20)
     private String type;

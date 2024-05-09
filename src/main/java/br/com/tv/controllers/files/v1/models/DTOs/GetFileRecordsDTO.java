@@ -12,7 +12,7 @@ import java.util.UUID;
 public record GetFileRecordsDTO(
     @Schema(description = "Record id", example = "00000000-0000-0000-0000-000000000000") UUID id,
     @Schema(description = "Delete date.", example = "2000-01-01T00:00:00Z") OffsetDateTime deletedAt,
-    @Schema(description = "Route.", example = "00000000-0000-0000-0000-000000000000") String route,
+    @Schema(description = "Reference name.", example = "00000000-0000-0000-0000-000000000000") String ref,
     @Schema(description = "Type.", example = ".png") String type,
     @Schema(description = "Creation date.", example = "2000-01-01T00:00:00Z") OffsetDateTime createdAt,
     @Schema(description = "Name", example = "arquivo2") String name,

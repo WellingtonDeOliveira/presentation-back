@@ -17,7 +17,7 @@ public interface FilesRepository extends JpaRepository<FilesEntity, UUID> {
             + "FROM FilesEntity u "
             + "WHERE "
             + "    (:search is null or lower(u.name) like :search) "
-            + " or (:search is null or lower(u.route) like :search) "
+            + " or (:search is null or lower(u.ref) like :search) "
             + " or (:search is null or lower(u.type) like :search) " )
     Page<FilesEntity> search(@Param("search") String search, Pageable pageable);
 }
