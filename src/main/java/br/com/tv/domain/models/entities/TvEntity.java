@@ -6,9 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,4 +24,12 @@ public class TvEntity extends BaseEntity {
 
     @Column(name = "campus", nullable = false)
     private String campus;
+
+    @Builder
+    public TvEntity(UUID id, OffsetDateTime createdAt,
+                      OffsetDateTime updatedAt, String name, String campus) {
+        super(id, createdAt, updatedAt);
+        this.name = name;
+        this.campus = campus;
+    }
 }

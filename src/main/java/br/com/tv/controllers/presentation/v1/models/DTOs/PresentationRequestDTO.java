@@ -13,6 +13,7 @@ import java.util.UUID;
 @Schema(name = "CratedPresentation")
 public record PresentationRequestDTO (
         @Schema(description = "tv_id", example = "00000000-0000-0000-0000-000000000000") @NotBlank UUID tvId,
+        @Schema(description = "Name Presentation", example = "Apresentação") @NotBlank @NotEmpty String name,
         @Schema(description = "Time in seconds", example = "10") @NotBlank @Size(max = 2) @NotEmpty String time,
         @Schema(description = "Date to delete", example = "2000-01-01T00:00:00Z") @NotBlank @NotEmpty OffsetDateTime deletedAt,
         @Schema(description = "-.", example = "MultipatFile[]") List<MultipartFile> files) {
