@@ -6,15 +6,20 @@ import br.com.tv.controllers.files.v1.annotations.CreateFileEndpoint;
 import br.com.tv.controllers.files.v1.models.DTOs.FileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
+import br.com.tv.controllers.presentation.v1.annotations.DeletePresentationEndpoint;
 import br.com.tv.controllers.presentation.v1.annotations.GetPresentationEndpoint;
 import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.PresentationRequestDTO;
 import br.com.tv.domain.services.PresentationService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.UUID;
 
 @OpenApiController(name = "Presentation")
 @AllArgsConstructor
@@ -32,6 +37,12 @@ public class PresentationController {
     @CreateFileEndpoint
     public ResponseEntity<Void> createPresentation(@ModelAttribute PresentationRequestDTO request) {
         presentationService.create(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeletePresentationEndpoint
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+        presentationService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

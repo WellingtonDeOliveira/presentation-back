@@ -141,8 +141,19 @@ public class PresentationServiceImpl implements PresentationService {
 
 
     @Override
+    @Transactional
     public void delete(UUID id) {
+        List<FilesEntity> files = filesRepository.findByPresentationId(id);
+        files.forEach(f -> {
+            try {
+                Files.delete(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef()));
+            } catch (IOException e) {
+                throw new BusinessException("Erro ao deletar anexo(s): " + f.getName());
+            }
+        });
 
+        filesRepository.deleteAllByPresentationId(id);
+        presentationRepository.deleteById(id);
     }
 
     @Override

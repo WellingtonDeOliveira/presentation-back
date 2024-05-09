@@ -123,8 +123,7 @@ public class FileServiceImpl implements FileService {
 
             filesRepository.deleteById(fileId);
         } catch (Exception e) {
-            var message = "Erro ao deletar anexo(s): ";
-            throw new BusinessException(message + fileId);
+            throw new BusinessException("Erro ao deletar anexo(s): " + fileId);
         }
     }
 

@@ -23,4 +23,6 @@ public interface FilesRepository extends JpaRepository<FilesEntity, UUID> {
     Page<FilesEntity> search(@Param("search") String search, Pageable pageable);
 
     List<FilesEntity> findByPresentationId(UUID presentationId);
+
+    void deleteAllByPresentationId(UUID id);
 }
