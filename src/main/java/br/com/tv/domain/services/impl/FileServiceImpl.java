@@ -43,7 +43,6 @@ public class FileServiceImpl implements FileService {
     @Override
     public GetFileResponseDTO search(GetFileRequestDTO request) {
         var pageable = request.buildPageable();
-
         var page = filesRepository.search(StringUtil.like(request.getSearch()), pageable);
 
         return parseToFilePageableResultDTO(page);

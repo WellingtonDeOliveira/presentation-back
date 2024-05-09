@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @OpenApiResponse403
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GetApresentationEndpoint {
+public @interface GetPresentationEndpoint {
 }

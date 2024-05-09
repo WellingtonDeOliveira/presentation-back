@@ -3,7 +3,13 @@ package br.com.tv.domain.services.impl;
 import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.utils.DateTimeUtil;
+import br.com.base.shared.utils.StringUtil;
+import br.com.tv.controllers.files.v1.models.DTOs.GetFileRecordsDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
+import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
+import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRecordDTO;
+import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
+import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.PresentationRequestDTO;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
@@ -15,11 +21,14 @@ import br.com.tv.domain.services.PresentationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,9 +96,49 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
-    public void search(GetFileRequestDTO request) {
+    public GetPresentationResponseDTO search(GetPresentationRequestDTO request) {
+        var pageable = request.buildPageable();
+        var page = presentationRepository.search(StringUtil.like(request.getSearch()), pageable);
 
+        return parseToPresentationPageableResultDTO(page);
     }
+
+    @Transactional
+    private GetPresentationResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
+        List<GetPresentationRecordDTO> content = result.getContent().stream()
+                .map(presentation -> {
+                    try {
+                        return GetPresentationRecordDTO.builder()
+                                .id(presentation.getId())
+                                .tvId(presentation.getTv().getId())
+                                .deletedAt(presentation.getDeletedAt())
+                                .createdAt(presentation.getCreatedAt())
+                                .name(presentation.getName())
+                                .type(presentation.getType())
+                                .files(getFilePathByDateAndName(filesRepository.findByPresentationId(presentation.getId())))
+                                .build();
+                    } catch (IOException e) {
+                        throw new BusinessException(e.getMessage());
+                    }
+                }).toList();
+        var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
+        return new GetPresentationResponseDTO(page);
+    }
+
+    private List<byte[]> getFilePathByDateAndName(List<FilesEntity> files) throws FileNotFoundException {
+        List<byte[]> paths = new ArrayList<>();
+        files.forEach(f ->
+                {
+                    try {
+                        paths.add(Files.readAllBytes(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef())));
+                    } catch (IOException e) {
+                        throw new BusinessException("Arquivo não encontrado: " + f.getRef());
+                    }
+                }
+        );
+        return paths;
+    }
+
 
     @Override
     public void delete(UUID id) {

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,6 +19,8 @@ public interface FilesRepository extends JpaRepository<FilesEntity, UUID> {
             + "WHERE "
             + "    (:search is null or lower(u.name) like :search) "
             + " or (:search is null or lower(u.ref) like :search) "
-            + " or (:search is null or lower(u.type) like :search) " )
+            + " or (:search is null or lower(u.type) like :search) ")
     Page<FilesEntity> search(@Param("search") String search, Pageable pageable);
+
+    List<FilesEntity> findByPresentationId(UUID presentationId);
 }
