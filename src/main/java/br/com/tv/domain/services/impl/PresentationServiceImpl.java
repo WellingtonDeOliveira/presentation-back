@@ -72,7 +72,7 @@ public class PresentationServiceImpl implements PresentationService {
                         .name(name)
                         .presentation(presentation)
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
-                        .route(ref)
+                        .ref(ref)
                         .deletedAt(request.deletedAt())
                         .type(file.getContentType())
                         .build()
@@ -81,7 +81,7 @@ public class PresentationServiceImpl implements PresentationService {
             presentationRepository.save(presentation);
             filesRepository.saveAll(entities);
         } catch (Exception e) {
-            deleteByRefNames(entities.stream().map(FilesEntity::getRoute).toList());
+            deleteByRefNames(entities.stream().map(FilesEntity::getRef).toList());
             throw new BusinessException(e.getMessage());
         }
     }

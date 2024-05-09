@@ -59,7 +59,7 @@ public class FileServiceImpl implements FileService {
                                     .deletedAt(file.getDeletedAt())
                                     .createdAt(file.getCreatedAt())
                                     .name(file.getName())
-                                    .route(file.getRef())
+                                    .ref(file.getRef())
                                     .type(file.getType())
                                     .file(Files.readAllBytes(getFilePathByDateAndName(file.getCreatedAt(), file.getRef())))
                                     .build();
