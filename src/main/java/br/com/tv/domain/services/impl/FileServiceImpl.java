@@ -4,13 +4,11 @@ import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.utils.DateTimeUtil;
-import br.com.tv.controllers.files.v1.models.DTOs.FileRequestDTO;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileRecordsDTO;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
+import br.com.tv.controllers.files.v1.models.DTOs.*;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
 import br.com.tv.domain.repositories.FilesRepository;
+import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.services.FileService;
 import br.com.base.shared.utils.StringUtil;
 import jakarta.transaction.Transactional;
@@ -37,38 +35,54 @@ import java.util.*;
 public class FileServiceImpl implements FileService {
 
     private final FilesRepository filesRepository;
+    private final PresentationRepository presentationRepository;
 
     @Value("${upload.dir}")
     private String uploadDir;
 
     @Override
-    public GetFileResponseDTO search(GetFileRequestDTO request) {
+    public GetFilesResponseDTO search(GetFilesRequestDTO request) {
         var pageable = request.buildPageable();
         var page = filesRepository.search(StringUtil.like(request.getSearch()), pageable);
 
         return parseToFilePageableResultDTO(page);
     }
 
+    @Override
+    public GetFileResponseDTO getById(UUID id) {
+        FilesEntity file = filesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Arquivo não encontrado!"));
+        PresentationEntity presentation = presentationRepository.findById(file.getPresentation().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrado!"));
+        try {
+            return GetFileResponseDTO.builder()
+                    .id(file.getId())
+                    .deletedAt(file.getDeletedAt())
+                    .createdAt(file.getCreatedAt())
+                    .name(file.getName())
+                    .namePresentation(presentation.getName())
+                    .ref(file.getRef())
+                    .type(file.getType())
+                    .file(Files.readAllBytes(getFilePathByDateAndName(file.getCreatedAt(), file.getRef())))
+                    .build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     @Transactional
-    private GetFileResponseDTO parseToFilePageableResultDTO(Page<FilesEntity> result) {
-            List<GetFileRecordsDTO> content = result.getContent().stream()
+    private GetFilesResponseDTO parseToFilePageableResultDTO(Page<FilesEntity> result) {
+            List<GetFilesRecordsDTO> content = result.getContent().stream()
                     .map(file -> {
-                        try {
-                            return GetFileRecordsDTO.builder()
-                                    .id(file.getId())
-                                    .deletedAt(file.getDeletedAt())
-                                    .createdAt(file.getCreatedAt())
-                                    .name(file.getName())
-                                    .ref(file.getRef())
-                                    .type(file.getType())
-                                    .file(Files.readAllBytes(getFilePathByDateAndName(file.getCreatedAt(), file.getRef())))
-                                    .build();
-                        } catch (IOException e) {
-                            throw new BusinessException(e.getMessage());
-                        }
+                        return GetFilesRecordsDTO.builder()
+                                .id(file.getId())
+                                .createdAt(file.getCreatedAt())
+                                .name(file.getName())
+                                .type(file.getType())
+                                .build();
                     }).toList();
             var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
-            return new GetFileResponseDTO(page);
+            return new GetFilesResponseDTO(page);
     }
 
     private Path getFilePathByDateAndName(OffsetDateTime pathDate, String route) throws FileNotFoundException {

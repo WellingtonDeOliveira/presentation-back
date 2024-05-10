@@ -3,7 +3,7 @@ api:
     jwt:
       secret-key: ${JWT_SECRET_KEY:0986430@753776789!1208@948741157}
       expiration: ${JWT_EXPIRATION:86400000}
-      issuer: ${JWT_ISSUER:base-project-api}
+      issuer: ${JWT_ISSUER:tv-project-api}
 
 upload:
   dir: src/main/resources/files/

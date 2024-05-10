@@ -2,12 +2,14 @@ package br.com.tv.controllers.files.v1;
 
 import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
+import br.com.tv.controllers.files.v1.annotations.GetFileEndpoint;
 import br.com.tv.controllers.files.v1.annotations.GetFilesEndpoint;
 import br.com.tv.controllers.files.v1.models.DTOs.FileRequestDTO;
 import br.com.tv.controllers.files.v1.annotations.CreateFileEndpoint;
 import br.com.tv.controllers.files.v1.annotations.DeleteFileEndpoint;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
+import br.com.tv.controllers.files.v1.models.DTOs.GetFilesRequestDTO;
+import br.com.tv.controllers.files.v1.models.DTOs.GetFilesResponseDTO;
 import br.com.tv.domain.services.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ public class FileController {
     private final FileService fileService;
 
     @GetFilesEndpoint
-    public ResponseEntity<GetFileResponseDTO> search(@ModelAttribute GetFileRequestDTO request) {
+    public ResponseEntity<GetFilesResponseDTO> search(@ModelAttribute GetFilesRequestDTO request) {
         var response = fileService.search(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -33,6 +35,12 @@ public class FileController {
     public ResponseEntity<Void> uploadToDirectory(@PathVariable("idPresentation") UUID idPresentation, @ModelAttribute FileRequestDTO request) {
         fileService.uploadToDirectory(idPresentation, request);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetFileEndpoint
+    public ResponseEntity<GetFileResponseDTO> getById(@PathVariable("id") UUID id) {
+        var response = fileService.getById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteFileEndpoint

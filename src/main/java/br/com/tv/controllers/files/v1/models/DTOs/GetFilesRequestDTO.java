@@ -9,12 +9,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Schema(name = "GetFileRequest")
-public final class GetFileRequestDTO extends PageableFilter<GetFileOfColumns> {
+@Schema(name = "GetFilesRequest")
+public final class GetFilesRequestDTO extends PageableFilter<GetFileOfColumns> {
 
     private String search;
 
-    public GetFileRequestDTO(Integer pageNumber, Integer pageSize, GetFileOfColumns sortBy, SortDirection sortDirection) {
+    public GetFilesRequestDTO(Integer pageNumber, Integer pageSize, GetFileOfColumns sortBy, SortDirection sortDirection) {
         super(
                 handleNullValue(pageNumber, 1),
                 handleNullValue(pageSize, 10),
