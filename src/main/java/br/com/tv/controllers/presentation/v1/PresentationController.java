@@ -3,17 +3,15 @@ package br.com.tv.controllers.presentation.v1;
 import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
 import br.com.tv.controllers.files.v1.annotations.CreateFileEndpoint;
-import br.com.tv.controllers.files.v1.models.DTOs.FileRequestDTO;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
-import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.controllers.presentation.v1.annotations.DeletePresentationEndpoint;
 import br.com.tv.controllers.presentation.v1.annotations.GetPresentationEndpoint;
+import br.com.tv.controllers.presentation.v1.annotations.UpdatePresentationEndpoint;
 import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.PresentationRequestDTO;
+import br.com.tv.controllers.presentation.v1.models.DTOs.UpdateNamePresentationRequestDTO;
 import br.com.tv.domain.services.PresentationService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,6 +35,12 @@ public class PresentationController {
     @CreateFileEndpoint
     public ResponseEntity<Void> createPresentation(@ModelAttribute PresentationRequestDTO request) {
         presentationService.create(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @UpdatePresentationEndpoint
+    public ResponseEntity<Void> update(@PathVariable("id") UUID id, @ModelAttribute UpdateNamePresentationRequestDTO request) {
+        presentationService.update(id, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

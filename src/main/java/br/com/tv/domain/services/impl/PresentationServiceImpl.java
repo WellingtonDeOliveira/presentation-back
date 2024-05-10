@@ -2,15 +2,13 @@ package br.com.tv.domain.services.impl;
 
 import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.shared.exceptions.BusinessException;
+import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.utils.DateTimeUtil;
 import br.com.base.shared.utils.StringUtil;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRecordsDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRecordDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.PresentationRequestDTO;
+import br.com.tv.controllers.presentation.v1.models.DTOs.*;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
 import br.com.tv.domain.models.entities.TvEntity;
@@ -139,6 +137,17 @@ public class PresentationServiceImpl implements PresentationService {
         return paths;
     }
 
+    @Override
+    @Transactional
+    public void update(UUID id, UpdateNamePresentationRequestDTO request) {
+        PresentationEntity presentation = presentationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrada!"));
+            System.out.println(request.name());
+            presentation.setName(request.name());
+            presentation.setUpdatedAt(DateTimeUtil.nowZoneUTC());
+            presentationRepository.save(presentation);
+
+    }
 
     @Override
     @Transactional
