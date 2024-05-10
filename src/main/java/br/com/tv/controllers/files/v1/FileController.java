@@ -30,8 +30,8 @@ public class FileController {
     }
 
     @CreateFileEndpoint
-    public ResponseEntity<Void> uploadToDirectory(@ModelAttribute FileRequestDTO request) {
-        fileService.uploadToDirectory(request);
+    public ResponseEntity<Void> uploadToDirectory(@PathVariable("idPresentation") UUID idPresentation, @ModelAttribute FileRequestDTO request) {
+        fileService.uploadToDirectory(idPresentation, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

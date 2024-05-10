@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface FileService {
 
-    void uploadToDirectory(FileRequestDTO files);
+    void uploadToDirectory(UUID idPresentation, FileRequestDTO files);
 
     GetFileResponseDTO search(GetFileRequestDTO request);
 

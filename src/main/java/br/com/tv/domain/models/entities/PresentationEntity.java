@@ -7,10 +7,10 @@ import lombok.*;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -33,4 +33,15 @@ public class PresentationEntity extends BaseEntity {
     @JoinColumn(name = "tv_id")
     private TvEntity tv;
 
+    @Builder
+    public PresentationEntity(UUID id, OffsetDateTime createdAt,
+                              OffsetDateTime updatedAt, OffsetDateTime deletedAt,
+                              String name, String time, String type, TvEntity tv) {
+        super(id, createdAt, updatedAt);
+        this.name = name;
+        this.deletedAt = deletedAt;
+        this.time = time;
+        this.tv = tv;
+        this.type = type;
+    }
 }

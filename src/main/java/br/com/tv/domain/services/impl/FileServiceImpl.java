@@ -9,6 +9,7 @@ import br.com.tv.controllers.files.v1.models.DTOs.GetFileRecordsDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileRequestDTO;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.domain.models.entities.FilesEntity;
+import br.com.tv.domain.models.entities.PresentationEntity;
 import br.com.tv.domain.repositories.FilesRepository;
 import br.com.tv.domain.services.FileService;
 import br.com.base.shared.utils.StringUtil;
@@ -81,7 +82,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public void uploadToDirectory(FileRequestDTO request) {
+    public void uploadToDirectory(UUID idPresentation, FileRequestDTO request) {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
         try {
@@ -100,6 +101,7 @@ public class FileServiceImpl implements FileService {
                 entities.add(FilesEntity
                         .builder()
                         .name(name)
+                        .presentation(PresentationEntity.builder().id(idPresentation).build())
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
                         .ref(ref)
                         .deletedAt(request.deletedAt())

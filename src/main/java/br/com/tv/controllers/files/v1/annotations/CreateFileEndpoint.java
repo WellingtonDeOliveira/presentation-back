@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
         description = "Requires role: " + RoleType.Roles.ROLE_READ_ROLE
 )
 @PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_READ_ROLE)")
-@RequestMapping(method = RequestMethod.POST, produces = "application/json")
+@RequestMapping(method = RequestMethod.PUT, path = "/{idPresentation}", produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse401
 @OpenApiResponse403
