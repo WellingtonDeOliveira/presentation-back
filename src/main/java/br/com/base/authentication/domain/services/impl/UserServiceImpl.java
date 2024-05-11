@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService {
                         .username(user.getUsername())
                         .campus(user.getCampus())
                         .groups(user.getGroupsNames())
+                        .deletedAt(user.getDeletedAt())
                         .build()).toList();
         var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
         return new GetUserResponseDTO(page);

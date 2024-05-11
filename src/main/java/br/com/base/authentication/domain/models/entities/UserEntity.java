@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String password;
     @Column(name = "campus", nullable = false, length = 20)
     private String campus;
+    @Column(name = "deleted_at", nullable = false)
+    protected OffsetDateTime deletedAt;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<UserLinkRoleEntity> roles = new HashSet<>();
 
@@ -42,6 +45,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
         this.password = builder.password;
         this.roles = builder.roles;
         this.groups = builder.groups;
+        this.deletedAt = builder.deletedAt;
     }
 
     public static Builder builder() {
@@ -104,6 +108,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
         private UUID id;
         private String username;
         private String password;
+        private OffsetDateTime deletedAt;
         private String campus;
         private Set<UserLinkRoleEntity> roles;
         private Set<UserLinkGroupRoleEntity> groups;
@@ -128,6 +133,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
         public Builder password(String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder deletedAt(OffsetDateTime deletedAt) {
+            this.deletedAt = deletedAt;
             return this;
         }
 

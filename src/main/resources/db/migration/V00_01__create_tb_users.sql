@@ -6,6 +6,7 @@ CREATE TABLE tb_users
     campus     varchar(20)  NOT NULL,
     created_at timestamp    NOT NULL,
     updated_at timestamp    NULL,
+    deleted_at timestamp    NULL,
     CONSTRAINT tb_users_pkey PRIMARY KEY (id),
     CONSTRAINT tb_users_un UNIQUE (username)
 );

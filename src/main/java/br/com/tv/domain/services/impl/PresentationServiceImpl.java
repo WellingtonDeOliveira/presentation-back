@@ -82,7 +82,6 @@ public class PresentationServiceImpl implements PresentationService {
                         .presentation(presentation)
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
                         .ref(ref)
-                        .deletedAt(request.deletedAt())
                         .type(file.getContentType())
                         .build()
                 );

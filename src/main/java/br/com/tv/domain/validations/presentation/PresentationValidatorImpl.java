@@ -12,7 +12,6 @@ public class PresentationValidatorImpl implements PresentationValidator{
 
     @Override
     public void validateForExtensions(String extension) {
-        System.out.println(extension);
         if (extension != null && !isAllowedExtension(extension)) {
             throw new BusinessException("Extensão de arquivo não permitida");
         }

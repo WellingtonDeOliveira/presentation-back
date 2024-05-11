@@ -25,9 +25,6 @@ public class FilesEntity extends BaseEntity {
     @Column(name = "type", nullable = false, length = 20)
     private String type;
 
-    @Column(name = "deleted_at", nullable = false)
-    private OffsetDateTime deletedAt;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "users_id")
     private UserEntity user;
