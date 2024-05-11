@@ -16,6 +16,5 @@ public record GetFileResponseDTO(
         @Schema(description = "Type.", example = ".png") String type,
         @Schema(description = "Reference name.", example = "00000000-0000-0000-0000-000000000000") String ref,
         @Schema(description = "Creation date.", example = "2000-01-01T00:00:00Z") OffsetDateTime createdAt,
-        @Schema(description = "Delete date.", example = "2000-01-01T00:00:00Z") OffsetDateTime deletedAt,
         @Schema(description = "File", example = "-") byte[] file) implements Serializable {
 }

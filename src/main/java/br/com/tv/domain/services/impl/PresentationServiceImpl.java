@@ -5,6 +5,7 @@ import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.utils.DateTimeUtil;
 import br.com.base.shared.utils.StringUtil;
+import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.*;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
@@ -13,6 +14,7 @@ import br.com.tv.domain.repositories.FilesRepository;
 import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.repositories.TvRepository;
 import br.com.tv.domain.services.PresentationService;
+import br.com.tv.domain.validations.presentation.PresentationValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +39,8 @@ import java.util.*;
 public class PresentationServiceImpl implements PresentationService {
 
     private final FilesRepository filesRepository;
-    private final TvRepository tvRepository;
     private final PresentationRepository presentationRepository;
+    private final PresentationValidator presentationValidator;
 
     @Value("${upload.dir}")
     private String uploadDir;
@@ -68,6 +70,9 @@ public class PresentationServiceImpl implements PresentationService {
                 String extension = Objects.requireNonNull(name).substring(name.lastIndexOf('.'));
                 String ref = UUID.randomUUID() + "_" + file.getName() + extension;
 
+                presentationValidator.validateForExtensions(extension);
+
+                // Fazer o front escolher se é video ou imagem e tirar essa linha.
                 presentation.setType(extension.equals(".mp4") ? "video" : "imagem");
 
                 Files.copy(file.getInputStream(), directoryPath.resolve(ref), StandardCopyOption.REPLACE_EXISTING);
@@ -91,47 +96,71 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
-    public GetPresentationResponseDTO search(GetPresentationRequestDTO request) {
+    public GetAllPresentationsResponseDTO search(GetAllPresentationsRequestDTO request) {
         var pageable = request.buildPageable();
         var page = presentationRepository.search(StringUtil.like(request.getSearch()), pageable);
 
         return parseToPresentationPageableResultDTO(page);
     }
 
+    @Override
+    public GetPresentationResponseDTO getById(UUID id) {
+        PresentationEntity presentation = presentationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrada!"));
+        try {
+            return GetPresentationResponseDTO.builder()
+                    .id(id)
+                    .tvId(presentation.getTv().getId())
+                    .deletedAt(presentation.getDeletedAt())
+                    .updatedAt(presentation.getUpdatedAt())
+                    .createdAt(presentation.getCreatedAt())
+                    .name(presentation.getName())
+                    .type(presentation.getType())
+                    .files(getFilePathByDateAndName(filesRepository.findByPresentationId(presentation.getId())))
+                    .build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
     @Transactional
-    private GetPresentationResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
-        List<GetPresentationRecordDTO> content = result.getContent().stream()
+    private GetAllPresentationsResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
+        List<GetAllPresentationsRecordDTO> content = result.getContent().stream()
                 .map(presentation -> {
-                    try {
-                        return GetPresentationRecordDTO.builder()
+                        return GetAllPresentationsRecordDTO.builder()
                                 .id(presentation.getId())
                                 .tvId(presentation.getTv().getId())
                                 .deletedAt(presentation.getDeletedAt())
                                 .createdAt(presentation.getCreatedAt())
                                 .name(presentation.getName())
                                 .type(presentation.getType())
-                                .files(getFilePathByDateAndName(filesRepository.findByPresentationId(presentation.getId())))
                                 .build();
-                    } catch (IOException e) {
-                        throw new BusinessException(e.getMessage());
-                    }
                 }).toList();
         var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
-        return new GetPresentationResponseDTO(page);
+        return new GetAllPresentationsResponseDTO(page);
     }
 
-    private List<byte[]> getFilePathByDateAndName(List<FilesEntity> files) throws FileNotFoundException {
-        List<byte[]> paths = new ArrayList<>();
+    private List<GetFileResponseDTO> getFilePathByDateAndName(List<FilesEntity> files) throws FileNotFoundException {
+        List<GetFileResponseDTO> filesResponse = new ArrayList<>();
         files.forEach(f ->
                 {
                     try {
-                        paths.add(Files.readAllBytes(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef())));
+                        filesResponse.add(
+                                GetFileResponseDTO.builder()
+                                        .id(f.getId())
+                                        .ref(f.getRef())
+                                        .name(f.getName())
+                                        .createdAt(f.getCreatedAt())
+                                        .type(f.getType())
+                                        .file(Files.readAllBytes(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef())))
+                                        .build()
+                        );
                     } catch (IOException e) {
                         throw new BusinessException("Arquivo não encontrado: " + f.getRef());
                     }
                 }
         );
-        return paths;
+        return filesResponse;
     }
 
     @Override
@@ -143,7 +172,6 @@ public class PresentationServiceImpl implements PresentationService {
             presentation.setName(request.name());
             presentation.setUpdatedAt(DateTimeUtil.nowZoneUTC());
             presentationRepository.save(presentation);
-
     }
 
     @Override

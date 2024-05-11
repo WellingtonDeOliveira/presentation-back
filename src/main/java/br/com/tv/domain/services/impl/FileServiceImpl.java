@@ -11,6 +11,7 @@ import br.com.tv.domain.repositories.FilesRepository;
 import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.services.FileService;
 import br.com.base.shared.utils.StringUtil;
+import br.com.tv.domain.validations.presentation.PresentationValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ public class FileServiceImpl implements FileService {
 
     private final FilesRepository filesRepository;
     private final PresentationRepository presentationRepository;
+    private final PresentationValidator presentationValidator;
 
     @Value("${upload.dir}")
     private String uploadDir;
@@ -57,7 +59,6 @@ public class FileServiceImpl implements FileService {
         try {
             return GetFileResponseDTO.builder()
                     .id(file.getId())
-                    .deletedAt(file.getDeletedAt())
                     .createdAt(file.getCreatedAt())
                     .name(file.getName())
                     .namePresentation(presentation.getName())
@@ -111,6 +112,8 @@ public class FileServiceImpl implements FileService {
                 String extension = Objects.requireNonNull(name).substring(name.lastIndexOf('.'));
                 String ref = UUID.randomUUID() + "_" + file.getName() + extension;
 
+                presentationValidator.validateForExtensions(extension);
+
                 Files.copy(file.getInputStream(), directoryPath.resolve(ref), StandardCopyOption.REPLACE_EXISTING);
                 entities.add(FilesEntity
                         .builder()
@@ -118,7 +121,6 @@ public class FileServiceImpl implements FileService {
                         .presentation(PresentationEntity.builder().id(idPresentation).build())
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
                         .ref(ref)
-                        .deletedAt(request.deletedAt())
                         .type(file.getContentType())
                         .build()
                 );
