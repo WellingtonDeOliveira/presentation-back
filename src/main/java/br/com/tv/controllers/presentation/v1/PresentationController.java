@@ -3,13 +3,8 @@ package br.com.tv.controllers.presentation.v1;
 import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
 import br.com.tv.controllers.files.v1.annotations.CreateFileEndpoint;
-import br.com.tv.controllers.presentation.v1.annotations.DeletePresentationEndpoint;
-import br.com.tv.controllers.presentation.v1.annotations.GetPresentationEndpoint;
-import br.com.tv.controllers.presentation.v1.annotations.UpdatePresentationEndpoint;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.PresentationRequestDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.UpdateNamePresentationRequestDTO;
+import br.com.tv.controllers.presentation.v1.annotations.*;
+import br.com.tv.controllers.presentation.v1.models.DTOs.*;
 import br.com.tv.domain.services.PresentationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,13 +21,19 @@ public class PresentationController {
 
     private final PresentationService presentationService;
 
-    @GetPresentationEndpoint
-    public ResponseEntity<GetPresentationResponseDTO> search(@ModelAttribute GetPresentationRequestDTO request) {
+    @GetAllPresentationsEndpoint
+    public ResponseEntity<GetAllPresentationsResponseDTO> search(@ModelAttribute GetAllPresentationsRequestDTO request) {
         var response = presentationService.search(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @CreateFileEndpoint
+    @GetPresentationEndpoint
+    public ResponseEntity<GetPresentationResponseDTO> getById(@PathVariable("id") UUID id) {
+        var response = presentationService.getById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @CreatePresentationEndpoint
     public ResponseEntity<Void> createPresentation(@ModelAttribute PresentationRequestDTO request) {
         presentationService.create(request);
         return new ResponseEntity<>(HttpStatus.OK);

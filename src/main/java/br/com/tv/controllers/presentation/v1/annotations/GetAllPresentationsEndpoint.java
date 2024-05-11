@@ -16,16 +16,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Operation(
-        summary = "Get presentation",
+        summary = "Get All presentation",
         description = "Requires role: " + RoleType.Roles.ROLE_READ_ROLE
 )
 @PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_READ_ROLE)")
-@RequestMapping(method = RequestMethod.GET, path = "/{id}", produces = "application/json")
+@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse400
 @OpenApiResponse401
 @OpenApiResponse403
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GetPresentationEndpoint {
+public @interface GetAllPresentationsEndpoint {
 }

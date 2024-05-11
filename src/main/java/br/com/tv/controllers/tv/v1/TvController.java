@@ -2,9 +2,6 @@ package br.com.tv.controllers.tv.v1;
 
 import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
-import br.com.tv.controllers.presentation.v1.annotations.GetPresentationEndpoint;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationRequestDTO;
-import br.com.tv.controllers.presentation.v1.models.DTOs.GetPresentationResponseDTO;
 import br.com.tv.controllers.tv.v1.annotations.GetTvsEndpoint;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRequestDTO;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvResponseDTO;
