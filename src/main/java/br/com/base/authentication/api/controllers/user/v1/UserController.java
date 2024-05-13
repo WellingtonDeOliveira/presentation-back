@@ -39,6 +39,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @UpdatedPasswordEndpoint
+    public ResponseEntity<Void> updatedPassword(@PathVariable("userId") UUID userId, @RequestBody @Valid UpdatedPasswordRequestDTO request) {
+        userService.updatedPassword(userId, request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @AddUserGroupsRolesEndpoint
     public ResponseEntity<Void> addUserGroupsRoles(@PathVariable UUID userId, @Schema(description = "List groups roles ids.", example = "[\"00000000-0000-0000-0000-000000000000\"]") @RequestBody Set<UUID> groupsRolesIds) {
         userService.addGroups(userId, groupsRolesIds);

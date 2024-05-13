@@ -10,6 +10,7 @@ import br.com.base.authentication.domain.repositories.UserLinkGroupRoleRepositor
 import br.com.base.authentication.domain.repositories.UserLinkRoleRepository;
 import br.com.base.authentication.domain.repositories.UserRepository;
 import br.com.base.authentication.domain.services.UserService;
+import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.models.enums.RoleType;
 import br.com.base.shared.utils.StringUtil;
@@ -92,6 +93,18 @@ public class UserServiceImpl implements UserService {
                 .campus(request.campus())
                 .build();
         userRepository.save(user);
+    }
+
+    @Override
+    public void updatedPassword(UUID id, UpdatedPasswordRequestDTO request) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado!"));
+        if(request.passwordOne().equals(request.passwordTwo())) {
+            user.setPassword(passwordEncoder.encode(request.passwordOne()));
+            userRepository.save(user);
+            return;
+        }
+        throw new BusinessException("Senhas não conferem!");
     }
 
     @Override

@@ -24,5 +24,7 @@ public interface UserService {
 
     void removeGroups(UUID userId, Set<UUID> groupsRolesIds) throws EntityNotFoundException;
 
+    void updatedPassword(UUID userId, UpdatedPasswordRequestDTO request) throws EntityNotFoundException;
+
     GetUserRolesResponseDTO getRoles(UUID userId, GetUserRolesRequestDTO request);
 }
