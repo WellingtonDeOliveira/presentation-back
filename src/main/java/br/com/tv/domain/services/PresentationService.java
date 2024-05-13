@@ -17,5 +17,7 @@ public interface PresentationService {
 
     void delete(UUID id);
 
+    void deleteByDate();
+
     void deleteByRefNames(List<String> names);
 }

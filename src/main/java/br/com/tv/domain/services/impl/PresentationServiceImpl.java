@@ -122,46 +122,6 @@ public class PresentationServiceImpl implements PresentationService {
         }
     }
 
-    @Transactional
-    private GetAllPresentationsResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
-        List<GetAllPresentationsRecordDTO> content = result.getContent().stream()
-                .map(presentation -> {
-                        return GetAllPresentationsRecordDTO.builder()
-                                .id(presentation.getId())
-                                .tvId(presentation.getTv().getId())
-                                .deletedAt(presentation.getDeletedAt())
-                                .createdAt(presentation.getCreatedAt())
-                                .name(presentation.getName())
-                                .type(presentation.getType())
-                                .build();
-                }).toList();
-        var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
-        return new GetAllPresentationsResponseDTO(page);
-    }
-
-    private List<GetFileResponseDTO> getFilePathByDateAndName(List<FilesEntity> files) throws FileNotFoundException {
-        List<GetFileResponseDTO> filesResponse = new ArrayList<>();
-        files.forEach(f ->
-                {
-                    try {
-                        filesResponse.add(
-                                GetFileResponseDTO.builder()
-                                        .id(f.getId())
-                                        .ref(f.getRef())
-                                        .name(f.getName())
-                                        .createdAt(f.getCreatedAt())
-                                        .type(f.getType())
-                                        .file(Files.readAllBytes(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef())))
-                                        .build()
-                        );
-                    } catch (IOException e) {
-                        throw new BusinessException("Arquivo não encontrado: " + f.getRef());
-                    }
-                }
-        );
-        return filesResponse;
-    }
-
     @Override
     @Transactional
     public void update(UUID id, UpdateNamePresentationRequestDTO request) {
@@ -200,6 +160,52 @@ public class PresentationServiceImpl implements PresentationService {
             var message = "Erro ao deletar anexo(s): ";
             throw new BusinessException(message + String.join(",", names));
         }
+    }
+
+    @Override
+    public void deleteByDate() {
+        List<PresentationEntity> presentations = presentationRepository.findAllByDeletedAtAfter(DateTimeUtil.nowZoneUTC());
+        presentationRepository.deleteAll(presentations);
+    }
+
+    @Transactional
+    private GetAllPresentationsResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
+        List<GetAllPresentationsRecordDTO> content = result.getContent().stream()
+                .map(presentation -> {
+                    return GetAllPresentationsRecordDTO.builder()
+                            .id(presentation.getId())
+                            .tvId(presentation.getTv().getId())
+                            .deletedAt(presentation.getDeletedAt())
+                            .createdAt(presentation.getCreatedAt())
+                            .name(presentation.getName())
+                            .type(presentation.getType())
+                            .build();
+                }).toList();
+        var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());
+        return new GetAllPresentationsResponseDTO(page);
+    }
+
+    private List<GetFileResponseDTO> getFilePathByDateAndName(List<FilesEntity> files) throws FileNotFoundException {
+        List<GetFileResponseDTO> filesResponse = new ArrayList<>();
+        files.forEach(f ->
+                {
+                    try {
+                        filesResponse.add(
+                                GetFileResponseDTO.builder()
+                                        .id(f.getId())
+                                        .ref(f.getRef())
+                                        .name(f.getName())
+                                        .createdAt(f.getCreatedAt())
+                                        .type(f.getType())
+                                        .file(Files.readAllBytes(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef())))
+                                        .build()
+                        );
+                    } catch (IOException e) {
+                        throw new BusinessException("Arquivo não encontrado: " + f.getRef());
+                    }
+                }
+        );
+        return filesResponse;
     }
 
     private Path getFilePathByDateAndFilename(OffsetDateTime pathDate, String refName) throws FileNotFoundException {

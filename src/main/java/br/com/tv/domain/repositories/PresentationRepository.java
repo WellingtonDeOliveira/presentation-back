@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -21,4 +23,6 @@ public interface PresentationRepository extends JpaRepository<PresentationEntity
             + "    (:search is null or lower(p.name) like :search) "
             + " or (:search is null or lower(t.campus) like :search) " )
     Page<PresentationEntity> search(@Param("search") String search, Pageable pageable);
+
+    List<PresentationEntity> findAllByDeletedAtAfter(OffsetDateTime currentDateTime);
 }
