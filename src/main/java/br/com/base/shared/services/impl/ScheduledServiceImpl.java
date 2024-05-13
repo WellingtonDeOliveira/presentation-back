@@ -13,6 +13,6 @@ public class ScheduledServiceImpl implements ScheduledService {
 
     private final PresentationService presentationService;
 
-    @Scheduled(cron = "59 59 23 * * *")
+    @Scheduled(cron = "0 59 23 * * *")
     public void taskDeletePresentationByDeletedAt() { presentationService.deleteByDate(); }
 }

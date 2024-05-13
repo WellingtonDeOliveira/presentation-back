@@ -163,8 +163,20 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
+    @Transactional
     public void deleteByDate() {
-        List<PresentationEntity> presentations = presentationRepository.findAllByDeletedAtAfter(DateTimeUtil.nowZoneUTC());
+        List<PresentationEntity> presentations = presentationRepository.findAllByDeletedAtBefore(DateTimeUtil.nowZoneUTC());
+        presentations.forEach(presentation -> {
+            List<FilesEntity> files = filesRepository.findByPresentationId(presentation.getId());
+            files.forEach(f -> {
+                try {
+                    Files.delete(Paths.get(uploadDir + f.getCreatedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "/", f.getRef()));
+                } catch (IOException e) {
+                    throw new BusinessException("Erro ao deletar anexo(s): " + f.getName());
+                }
+            });
+            filesRepository.deleteAllByPresentationId(presentation.getId());
+        });
         presentationRepository.deleteAll(presentations);
     }
 

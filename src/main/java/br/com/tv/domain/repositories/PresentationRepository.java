@@ -24,5 +24,5 @@ public interface PresentationRepository extends JpaRepository<PresentationEntity
             + " or (:search is null or lower(t.campus) like :search) " )
     Page<PresentationEntity> search(@Param("search") String search, Pageable pageable);
 
-    List<PresentationEntity> findAllByDeletedAtAfter(OffsetDateTime currentDateTime);
+    List<PresentationEntity> findAllByDeletedAtBefore(OffsetDateTime currentDateTime);
 }
