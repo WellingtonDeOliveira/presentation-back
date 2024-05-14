@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Updated password",
-        description = "Requires role: " + RoleType.Roles.ROLE_REMOVE_USER_ROLES
+        description = "Requires role: " + RoleType.Roles.ROLE_UPDATED_PASSWORD
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_REMOVE_USER_ROLES)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_UPDATED_PASSWORD)")
 @RequestMapping(method = RequestMethod.PUT, path = "/{userId}", produces = "application/json")
 @OpenApiResponse204
 @OpenApiResponse400

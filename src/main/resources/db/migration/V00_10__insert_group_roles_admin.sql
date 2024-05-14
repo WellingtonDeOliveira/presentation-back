@@ -1,5 +1,5 @@
 INSERT INTO tb_groups_roles(id, "name", description, created_at, updated_at)
-VALUES('d7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'Management', 'It has permissions to maintain users and roles.', NOW(), NOW());
+VALUES('d7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'Administrador', 'Permissão para total uso da aplicação.', NOW(), NOW());
 
 INSERT INTO tb_groups_roles_link_roles(id, group_role_id, "role", created_at, updated_at)
 VALUES('1e201b1b-bb13-46cc-a048-4f2c27c86f41', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_READ_ROLE', NOW(), NOW())
@@ -15,4 +15,16 @@ VALUES('1e201b1b-bb13-46cc-a048-4f2c27c86f41', 'd7f29fa4-bd05-43d4-9472-7e1cbac5
      ,('acddd6e6-4e3c-4c1e-a9e7-2600c6650197', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_UPDATE_GROUP_ROLES', NOW(), NOW())
      ,('f6e8de32-5a58-4cde-b1b2-5dec9ea845af', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_REMOVE_GROUP_ROLES', NOW(), NOW())
      ,('8fffbe41-3e7a-4efd-95c9-09ab8b220dd8', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_ADD_GROUP_ROLES_ROLES', NOW(), NOW())
-     ,('be78093d-bd70-434a-af5a-1e05da545586', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_REMOVE_GROUP_ROLES_ROLES', NOW(), NOW());
+     ,('be78093d-bd70-434a-af5a-1e05da545586', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_REMOVE_GROUP_ROLES_ROLES', NOW(), NOW())
+     ,('d9f90c68-f4ca-4573-a803-be6637bc1133', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_USERS', NOW(), NOW())
+     ,('c29ecdd8-854f-408f-926c-5e9cacd4bded', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_UPDATED_PASSWORD', NOW(), NOW())
+     ,('2becd2c7-7c88-4860-9929-3e5f6b0f1626', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_CREATED_FILE', NOW(), NOW())
+     ,('58d7b11f-9cbd-4461-bb61-9421f4d183b8', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_FILE', NOW(), NOW())
+     ,('dd707d57-89be-4b40-b5da-ddfe48abf975', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_DELETED_FILE', NOW(), NOW())
+     ,('75c633e4-7840-4474-b082-d187a1c0a544', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_ALL_FILES', NOW(), NOW())
+     ,('4f5e9150-a4f5-495c-b21f-7ed1c75cbbba', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_ALL_PRESENTATION', NOW(), NOW())
+     ,('cbcd424c-19a8-4982-a5b2-c3e894e54b3a', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_PRESENTATION', NOW(), NOW())
+     ,('6bd951b7-970f-4ca3-a327-1c5854a397a2', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_CREATED_PRESENTATION', NOW(), NOW())
+     ,('975f4a02-6105-456f-87e0-4b265afd0ed8', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_UPDATED_PRESENTATION', NOW(), NOW())
+     ,('6111a379-34ea-4927-b786-6b10998b91be', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_DELETE_PRESENTATION', NOW(), NOW())
+     ,('fcb3c469-e9d4-4e83-97b6-901ef1d44ac4', 'd7f29fa4-bd05-43d4-9472-7e1cbac522fa', 'ROLE_GET_ALL_TVS', NOW(), NOW());

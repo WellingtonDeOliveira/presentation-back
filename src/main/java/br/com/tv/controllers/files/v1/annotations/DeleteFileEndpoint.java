@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Delete attachment by id",
-        description = "Requires role: " + RoleType.Roles.ROLE_READ_ROLE
+        description = "Requires role: " + RoleType.Roles.ROLE_DELETED_FILE
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_READ_ROLE)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_DELETED_FILE)")
 @RequestMapping(method = RequestMethod.DELETE, path = "/{id}", produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse401

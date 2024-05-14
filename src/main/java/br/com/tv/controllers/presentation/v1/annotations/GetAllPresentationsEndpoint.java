@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Get All presentation",
-        description = "Requires role: " + RoleType.Roles.ROLE_READ_ROLE
+        description = "Requires role: " + RoleType.Roles.ROLE_GET_ALL_PRESENTATION
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_READ_ROLE)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_GET_ALL_PRESENTATION)")
 @RequestMapping(method = RequestMethod.GET, produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse400

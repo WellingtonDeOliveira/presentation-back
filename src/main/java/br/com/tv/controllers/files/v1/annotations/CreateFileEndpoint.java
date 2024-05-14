@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Create Files",
-        description = "Requires role: " + RoleType.Roles.ROLE_READ_ROLE
+        description = "Requires role: " + RoleType.Roles.ROLE_CREATED_FILE
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_READ_ROLE)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_CREATED_FILE)")
 @RequestMapping(method = RequestMethod.PUT, path = "/{idPresentation}", produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse401
