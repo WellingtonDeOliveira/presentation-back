@@ -57,9 +57,7 @@ public class PresentationServiceImpl implements PresentationService {
     public void create(PresentationRequestDTO request) {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
-
-        System.out.println(Arrays.toString(new Set[]{request.tvsId()}));
-
+        
         try {
             String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             Path directoryPath = Paths.get(uploadDir, currentDate);
