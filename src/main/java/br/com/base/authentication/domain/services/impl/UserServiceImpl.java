@@ -1,6 +1,7 @@
 package br.com.base.authentication.domain.services.impl;
 
 import br.com.base.authentication.api.controllers.user.v1.models.DTOs.*;
+import br.com.base.authentication.api.controllers.user.v1.models.enums.ProfileType;
 import br.com.base.authentication.domain.models.entities.GroupRoleEntity;
 import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.authentication.domain.models.entities.UserLinkGroupRoleEntity;
@@ -14,6 +15,8 @@ import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.exceptions.EntityNotFoundException;
 import br.com.base.shared.models.enums.RoleType;
 import br.com.base.shared.utils.StringUtil;
+import br.com.tv.domain.models.entities.TvEntity;
+import br.com.tv.domain.repositories.TvRepository;
 import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final UserLinkRoleRepository userLinkRoleRepository;
     private final UserLinkGroupRoleRepository userLinkGroupRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TvRepository tvRepository;
 
     @Transactional
     @Override
@@ -52,15 +56,34 @@ public class UserServiceImpl implements UserService {
         userLinkRoleRepository.saveAll(rolesToLink);
     }
 
+    private void createNewTv(UUID userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado!"));
+
+        TvEntity tv = TvEntity.builder()
+                .name(user.getUsername())
+                .campus(user.getCampus())
+                .build();
+        tvRepository.save(tv);
+    }
+
     @Override
+    @Transactional
     public void addGroups(UUID userId, Set<UUID> groupsRolesIds) throws EntityNotFoundException {
         checkUserExistOrThrowException(userId);
         var groupsLinked = userLinkGroupRoleRepository.findByUserId(userId);
         groupsLinked.stream().map(g -> g.getGroup().getId()).forEach(groupsRolesIds::remove);
         if (groupsRolesIds.isEmpty()) return;
+
         var groupsToLink = groupRoleRepository.findByIdIn(groupsRolesIds);
         var user = UserEntity.builder().id(userId).build();
         var links = buildGroupsLinkRoles(user, groupsToLink);
+
+        groupsRolesIds.forEach(l -> {
+            if(l.equals(ProfileType.TV.getGroupRolesId()))
+                createNewTv(userId);
+        });
+        
         userLinkGroupRoleRepository.saveAll(links);
     }
 
