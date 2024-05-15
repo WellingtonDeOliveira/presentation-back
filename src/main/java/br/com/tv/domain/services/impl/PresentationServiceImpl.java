@@ -7,10 +7,14 @@ import br.com.base.shared.utils.DateTimeUtil;
 import br.com.base.shared.utils.StringUtil;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.*;
+import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRecordsDTO;
+import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRequestDTO;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
+import br.com.tv.domain.models.entities.PresentationLinkTvEntity;
 import br.com.tv.domain.models.entities.TvEntity;
 import br.com.tv.domain.repositories.FilesRepository;
+import br.com.tv.domain.repositories.PresentationLinkTvRepository;
 import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.repositories.TvRepository;
 import br.com.tv.domain.services.PresentationService;
@@ -33,6 +37,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +45,9 @@ public class PresentationServiceImpl implements PresentationService {
 
     private final FilesRepository filesRepository;
     private final PresentationRepository presentationRepository;
+    private final TvRepository tvRepository;
     private final PresentationValidator presentationValidator;
+    private final PresentationLinkTvRepository presentationLinkTvRepository;
 
     @Value("${upload.dir}")
     private String uploadDir;
@@ -57,13 +64,7 @@ public class PresentationServiceImpl implements PresentationService {
             if (!Files.exists(directoryPath))
                 Files.createDirectories(directoryPath);
 
-            PresentationEntity presentation = new PresentationEntity(
-                    request.name(),
-                    request.time(),
-                    null,
-                    request.deletedAt(),
-                    TvEntity.builder().id(request.tvId()).build()
-            );
+            PresentationEntity presentation = buildPresentation(request);
 
             for (MultipartFile file : request.files()) {
                 String name = file.getOriginalFilename();
@@ -109,7 +110,7 @@ public class PresentationServiceImpl implements PresentationService {
         try {
             return GetPresentationResponseDTO.builder()
                     .id(id)
-                    .tvId(presentation.getTv().getId())
+                    .tvs(getTvRecordsDTOS(presentation))
                     .deletedAt(presentation.getDeletedAt())
                     .updatedAt(presentation.getUpdatedAt())
                     .createdAt(presentation.getCreatedAt())
@@ -180,13 +181,25 @@ public class PresentationServiceImpl implements PresentationService {
         presentationRepository.deleteAll(presentations);
     }
 
+    private List<GetTvRecordsDTO> getTvRecordsDTOS(PresentationEntity presentation) {
+        return presentation.getTvs().stream().map(linkTv -> {
+            TvEntity tv = linkTv.getTv();
+            return GetTvRecordsDTO.builder()
+                    .id(tv.getId())
+                    .campus(tv.getCampus())
+                    .name(tv.getName())
+                    .createdAt(tv.getCreatedAt())
+                    .build();
+        }).toList();
+    }
+
     @Transactional
     private GetAllPresentationsResponseDTO parseToPresentationPageableResultDTO(Page<PresentationEntity> result) {
         List<GetAllPresentationsRecordDTO> content = result.getContent().stream()
                 .map(presentation -> {
                     return GetAllPresentationsRecordDTO.builder()
                             .id(presentation.getId())
-                            .tvId(presentation.getTv().getId())
+                            .tvs(getTvRecordsDTOS(presentation))
                             .deletedAt(presentation.getDeletedAt())
                             .createdAt(presentation.getCreatedAt())
                             .name(presentation.getName())
@@ -218,6 +231,30 @@ public class PresentationServiceImpl implements PresentationService {
                 }
         );
         return filesResponse;
+    }
+
+    private void addTvs(PresentationEntity presentation, List<UUID> tvsId) {
+        List<TvEntity> tvs = tvRepository.findAllById(tvsId);
+        tvs = removeDuplicateRoles(tvs);
+        var newLinks = tvs.stream().map(tv ->
+                new PresentationLinkTvEntity(presentation, tv)
+        ).toList();
+        presentationLinkTvRepository.saveAll(newLinks);
+    }
+
+    private List<TvEntity> removeDuplicateRoles(List<TvEntity> tvs) {
+        return tvs.stream().distinct().collect(Collectors.toList());
+    }
+
+    private PresentationEntity buildPresentation(PresentationRequestDTO request) {
+        PresentationEntity presentation = PresentationEntity.builder()
+                .name(request.name())
+                .time(request.time())
+                .deletedAt(request.deletedAt())
+                .build();
+
+        addTvs(presentation, request.tvsId());
+        return presentation;
     }
 
     private Path getFilePathByDateAndFilename(OffsetDateTime pathDate, String refName) throws FileNotFoundException {

@@ -1,4 +1,4 @@
-CREATE TABLE TB_PRESENTATION_LINK_TV
+CREATE TABLE tb_presentation_link_tv
 (
     id              uuid      NOT NULL,
     presentation_id uuid      NOT NULL,

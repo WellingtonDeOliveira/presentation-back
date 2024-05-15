@@ -18,10 +18,11 @@ public interface PresentationRepository extends JpaRepository<PresentationEntity
 
     @Query("SELECT distinct p "
             + "FROM PresentationEntity p "
-            + "INNER JOIN p.tv t "
+            + "INNER JOIN p.tvs t "
+            + "INNER JOIN t.tv tv "
             + "WHERE "
             + "    (:search is null or lower(p.name) like :search) "
-            + " or (:search is null or lower(t.campus) like :search) " )
+            + " or (:search is null or lower(tv.campus) like :search) " )
     Page<PresentationEntity> search(@Param("search") String search, Pageable pageable);
 
     List<PresentationEntity> findAllByDeletedAtBefore(OffsetDateTime currentDateTime);

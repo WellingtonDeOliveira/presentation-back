@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -29,19 +28,22 @@ public class PresentationEntity extends BaseEntity {
     @Column(name = "deleted_at", nullable = false)
     private OffsetDateTime deletedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tv_id")
-    private TvEntity tv;
+    @Getter
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "presentation")
+    private Set<PresentationLinkTvEntity> tvs = new HashSet<>();
 
     @Builder
     public PresentationEntity(UUID id, OffsetDateTime createdAt,
                               OffsetDateTime updatedAt, OffsetDateTime deletedAt,
-                              String name, String time, String type, TvEntity tv) {
+                              String name, String time, String type) {
         super(id, createdAt, updatedAt);
         this.name = name;
         this.deletedAt = deletedAt;
         this.time = time;
-        this.tv = tv;
         this.type = type;
+    }
+
+    public Set<String> getTvNames() {
+        return tvs.stream().map(tv -> tv.getTv().getName()).collect(Collectors.toUnmodifiableSet());
     }
 }
