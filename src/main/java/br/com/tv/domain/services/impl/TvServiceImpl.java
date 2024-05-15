@@ -1,9 +1,12 @@
 package br.com.tv.domain.services.impl;
 
+import br.com.base.authentication.domain.models.entities.UserEntity;
+import br.com.base.authentication.domain.repositories.UserRepository;
 import br.com.base.shared.utils.StringUtil;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRecordsDTO;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRequestDTO;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvResponseDTO;
+import br.com.tv.controllers.tv.v1.models.DTOs.UserAssociatedByTvRecordDTO;
 import br.com.tv.domain.models.entities.TvEntity;
 import br.com.tv.domain.repositories.TvRepository;
 import br.com.tv.domain.services.TvService;
@@ -11,15 +14,18 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class TvServiceImpl implements TvService {
 
     private TvRepository tvRepository;
+    private UserRepository userRepository;
 
     @Override
     public GetTvResponseDTO search(GetTvRequestDTO request) {
@@ -35,6 +41,11 @@ public class TvServiceImpl implements TvService {
                 .map(tv -> {
                         return GetTvRecordsDTO.builder()
                                 .id(tv.getId())
+                                .user(UserAssociatedByTvRecordDTO.builder()
+                                        .id(tv.getUser().getId())
+                                        .name(tv.getUser().getName())
+                                        .build()
+                                )
                                 .createdAt(tv.getCreatedAt())
                                 .name(tv.getName())
                                 .campus(tv.getCampus())

@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
         return LoginResponseDTO.builder()
                 .token(token)
                 .nickname(user.getUsername())
+                .name(user.getName())
                 .campus(user.getCampus())
                 .roles(user.getAllRoles())
                 .groups(user.getGroupsNames())

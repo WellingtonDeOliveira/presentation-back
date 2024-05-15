@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @OpenApiController(name = "Presentation")
@@ -34,7 +35,7 @@ public class PresentationController {
     }
 
     @CreatePresentationEndpoint
-    public ResponseEntity<Void> createPresentation(@ModelAttribute PresentationRequestDTO request) {
+    public ResponseEntity<Void> createPresentation(@ModelAttribute PresentationRequestDTO request) throws IOException {
         presentationService.create(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

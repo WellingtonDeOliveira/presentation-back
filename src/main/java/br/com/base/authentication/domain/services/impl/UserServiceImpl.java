@@ -61,7 +61,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado!"));
 
         TvEntity tv = TvEntity.builder()
-                .name(user.getUsername())
+                .name(user.getName())
+                .user(user)
                 .campus(user.getCampus())
                 .build();
         tvRepository.save(tv);
@@ -112,6 +113,7 @@ public class UserServiceImpl implements UserService {
     public void create(CreateUserRequestDTO request) {
         var user = UserEntity.builder()
                 .username(request.username())
+                .name(request.name())
                 .password(passwordEncoder.encode(request.password()))
                 .campus(request.campus())
                 .build();

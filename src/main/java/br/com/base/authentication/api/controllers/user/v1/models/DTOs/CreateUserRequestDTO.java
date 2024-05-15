@@ -13,6 +13,11 @@ public record CreateUserRequestDTO(
         @NotBlank
         @Length(min = 3, max = 50)
         String username,
+        @Schema(description = "Name.", example = "Name")
+        @NotEmpty
+        @NotBlank
+        @Length(min = 3, max = 50)
+        String name,
         @Schema(description = "Password.", example = "password")
         @ValidPassword
         String password,

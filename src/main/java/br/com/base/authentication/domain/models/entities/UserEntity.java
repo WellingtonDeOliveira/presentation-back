@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
+    @Column(name = "name", unique = true, nullable = false, length = 50)
+    private String name;
     @Column(name = "password", nullable = false, length = 200)
     private String password;
     @Column(name = "campus", nullable = false, length = 20)
@@ -43,6 +45,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private UserEntity(Builder builder) {
         super.id = builder.id;
         this.username = builder.username;
+        this.name = builder.name;
         this.campus = builder.campus;
         this.password = builder.password;
         this.roles = builder.roles;
@@ -109,6 +112,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     public static final class Builder {
         private UUID id;
         private String username;
+        private String name;
         private String password;
         private OffsetDateTime deletedAt;
         private String campus;
@@ -125,6 +129,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
         public Builder username(String username) {
             this.username = username;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
             return this;
         }
 

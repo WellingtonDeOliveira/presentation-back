@@ -21,6 +21,7 @@ import br.com.tv.domain.validations.presentation.PresentationValidator;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -54,29 +55,28 @@ public class PresentationServiceImpl implements PresentationService {
 
     @Override
     @Transactional
-    public void create(PresentationRequestDTO request) {
+    public void create(PresentationRequestDTO request) throws IOException {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
-        
-        try {
-            String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            Path directoryPath = Paths.get(uploadDir, currentDate);
 
-            if (!Files.exists(directoryPath))
-                Files.createDirectories(directoryPath);
+        String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        Path directoryPath = Paths.get(uploadDir, currentDate);
 
-            PresentationEntity presentation = buildPresentation(request);
+        if (!Files.exists(directoryPath))
+            Files.createDirectories(directoryPath);
 
-            for (MultipartFile file : request.files()) {
-                String name = file.getOriginalFilename();
-                String extension = Objects.requireNonNull(name).substring(name.lastIndexOf('.'));
-                String ref = UUID.randomUUID() + "_" + file.getName() + extension;
+        PresentationEntity presentation = buildPresentation(request);
 
-                presentationValidator.validateForExtensions(extension);
+        request.files().forEach(file -> {
+            String name = file.getOriginalFilename();
+            String extension = Objects.requireNonNull(name).substring(name.lastIndexOf('.'));
+            String ref = UUID.randomUUID() + "_" + file.getName() + extension;
 
-                // Fazer o front escolher se é video ou imagem e tirar essa linha.
-                presentation.setType(extension.equals(".mp4") ? "video" : "imagem");
+            presentationValidator.validateForExtensions(extension);
 
+            // Fazer o front escolher se é video ou imagem e tirar essa linha.
+            presentation.setType(extension.equals(".mp4") ? "video" : "imagem");
+            try {
                 Files.copy(file.getInputStream(), directoryPath.resolve(ref), StandardCopyOption.REPLACE_EXISTING);
                 entities.add(FilesEntity
                         .builder()
@@ -87,14 +87,14 @@ public class PresentationServiceImpl implements PresentationService {
                         .type(file.getContentType())
                         .build()
                 );
+            } catch (Exception e) {
+                deleteByRefNames(entities.stream().map(FilesEntity::getRef).toList());
+                throw new BusinessException(e.getMessage());
             }
-            presentationRepository.save(presentation);
-            filesRepository.saveAll(entities);
-            addTvs(presentation, request.tvsId());
-        } catch (Exception e) {
-            deleteByRefNames(entities.stream().map(FilesEntity::getRef).toList());
-            throw new BusinessException(e.getMessage());
-        }
+        });
+        presentationRepository.save(presentation);
+        filesRepository.saveAll(entities);
+        addTvs(presentation, request.tvsId());
     }
 
     @Override
