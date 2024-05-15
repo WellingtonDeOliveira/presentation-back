@@ -8,7 +8,6 @@ import br.com.base.shared.utils.StringUtil;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
 import br.com.tv.controllers.presentation.v1.models.DTOs.*;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRecordsDTO;
-import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRequestDTO;
 import br.com.tv.domain.models.entities.FilesEntity;
 import br.com.tv.domain.models.entities.PresentationEntity;
 import br.com.tv.domain.models.entities.PresentationLinkTvEntity;
@@ -20,6 +19,7 @@ import br.com.tv.domain.repositories.TvRepository;
 import br.com.tv.domain.services.PresentationService;
 import br.com.tv.domain.validations.presentation.PresentationValidator;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -57,6 +57,9 @@ public class PresentationServiceImpl implements PresentationService {
     public void create(PresentationRequestDTO request) {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
+
+        System.out.println(Arrays.toString(new Set[]{request.tvsId()}));
+
         try {
             String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             Path directoryPath = Paths.get(uploadDir, currentDate);
@@ -89,6 +92,7 @@ public class PresentationServiceImpl implements PresentationService {
             }
             presentationRepository.save(presentation);
             filesRepository.saveAll(entities);
+            addTvs(presentation, request.tvsId());
         } catch (Exception e) {
             deleteByRefNames(entities.stream().map(FilesEntity::getRef).toList());
             throw new BusinessException(e.getMessage());
@@ -233,7 +237,7 @@ public class PresentationServiceImpl implements PresentationService {
         return filesResponse;
     }
 
-    private void addTvs(PresentationEntity presentation, List<UUID> tvsId) {
+    private void addTvs(PresentationEntity presentation, Set<UUID> tvsId) {
         List<TvEntity> tvs = tvRepository.findAllById(tvsId);
         tvs = removeDuplicateRoles(tvs);
         var newLinks = tvs.stream().map(tv ->
@@ -247,14 +251,11 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     private PresentationEntity buildPresentation(PresentationRequestDTO request) {
-        PresentationEntity presentation = PresentationEntity.builder()
+        return PresentationEntity.builder()
                 .name(request.name())
                 .time(request.time())
                 .deletedAt(request.deletedAt())
                 .build();
-
-        addTvs(presentation, request.tvsId());
-        return presentation;
     }
 
     private Path getFilePathByDateAndFilename(OffsetDateTime pathDate, String refName) throws FileNotFoundException {

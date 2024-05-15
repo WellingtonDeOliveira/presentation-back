@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -20,4 +21,6 @@ public interface TvRepository extends JpaRepository<TvEntity, UUID> {
             + "    (:search is null or lower(tv.name) like :search) "
             + " or (:search is null or lower(tv.campus) like :search) ")
     Page<TvEntity> search(@Param("search") String search, Pageable pageable);
+
+    List<TvEntity> findAllById(List<UUID>[] tvsId);
 }

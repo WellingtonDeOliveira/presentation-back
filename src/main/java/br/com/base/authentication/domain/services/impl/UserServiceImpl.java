@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
             if(l.equals(ProfileType.TV.getGroupRolesId()))
                 createNewTv(userId);
         });
-        
+
         userLinkGroupRoleRepository.saveAll(links);
     }
 
