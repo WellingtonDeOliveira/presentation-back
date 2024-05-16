@@ -67,6 +67,26 @@ public class TvServiceImpl implements TvService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public List<GetTvRecordsDTO> getTvWithoutPresentation() {
+        List<TvEntity> tvs = tvRepository.findAllTvsWithoutPresentations();
+
+        List<GetTvRecordsDTO> content = tvs.stream().map(tv -> {
+            return GetTvRecordsDTO.builder()
+                    .id(tv.getId())
+                    .campus(tv.getCampus())
+                    .name(tv.getName())
+                    .createdAt(tv.getCreatedAt())
+                    .user(UserAssociatedByTvRecordDTO.builder()
+                            .id(tv.getUser().getId())
+                            .name(tv.getUser().getName())
+                            .build())
+                    .build();
+        }).toList();
+        return content;
+    }
+
     @Transactional
     private GetTvResponseDTO parseToTvsPageableResultDTO(Page<TvEntity> result) {
         List<GetTvRecordsDTO> content = result.getContent().stream()

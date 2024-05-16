@@ -22,7 +22,8 @@ public interface TvRepository extends JpaRepository<TvEntity, UUID> {
             + " or (:search is null or lower(tv.campus) like :search) ")
     Page<TvEntity> search(@Param("search") String search, Pageable pageable);
 
-    List<TvEntity> findAllById(List<UUID>[] tvsId);
+    @Query("SELECT tv FROM TvEntity tv WHERE tv.id NOT IN (SELECT pltv.tv.id FROM PresentationLinkTvEntity pltv)")
+    List<TvEntity> findAllTvsWithoutPresentations();
 
     TvEntity findByUserId(UUID id);
 }
