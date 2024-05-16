@@ -23,4 +23,6 @@ public interface TvRepository extends JpaRepository<TvEntity, UUID> {
     Page<TvEntity> search(@Param("search") String search, Pageable pageable);
 
     List<TvEntity> findAllById(List<UUID>[] tvsId);
+
+    TvEntity findByUserId(UUID id);
 }
