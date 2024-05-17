@@ -21,6 +21,8 @@ import br.com.tv.domain.validations.PresentationValidator;
 import br.com.tv.domain.validations.TvValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,6 +43,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class PresentationServiceImpl implements PresentationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PresentationService.class);
 
     private final FilesRepository filesRepository;
     private final PresentationRepository presentationRepository;
@@ -106,8 +110,7 @@ public class PresentationServiceImpl implements PresentationService {
 
     @Override
     public GetPresentationResponseDTO getById(UUID id) {
-        PresentationEntity presentation = presentationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrada!"));
+        PresentationEntity presentation = findById(id);
         try {
             return GetPresentationResponseDTO.builder()
                     .id(id)
@@ -127,8 +130,7 @@ public class PresentationServiceImpl implements PresentationService {
     @Override
     @Transactional
     public void update(UUID id, UpdateNamePresentationRequestDTO request) {
-        PresentationEntity presentation = presentationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrada!"));
+        PresentationEntity presentation = findById(id);
             System.out.println(request.name());
             presentation.setName(request.name());
             presentation.setUpdatedAt(DateTimeUtil.nowZoneUTC());
@@ -182,6 +184,14 @@ public class PresentationServiceImpl implements PresentationService {
             presentationLinkTvRepository.deleteAllByPresentationId(presentation.getId());
         });
         presentationRepository.deleteAll(presentations);
+    }
+
+    @Override
+    @Transactional
+    public void deleteTvByPresentation(UUID presentationId, UUID tvId) {
+        logger.info("Deleting TV with ID {} from presentation with ID {}", tvId, presentationId);
+        presentationLinkTvRepository.deleteByPresentationIdAndTvId(presentationId, tvId);
+        logger.info("Deletion completed");
     }
 
     private List<GetTvRecordsDTO> getTvRecordsDTOS(PresentationEntity presentation) {
@@ -271,6 +281,11 @@ public class PresentationServiceImpl implements PresentationService {
 
         var message = "Arquivo não existe: ";
         throw new FileNotFoundException(message + refName);
+    }
+
+    private PresentationEntity findById(UUID id) {
+        return presentationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrada!"));
     }
 
     @SuppressWarnings("unchecked")

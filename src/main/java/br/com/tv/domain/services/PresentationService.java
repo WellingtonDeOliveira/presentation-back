@@ -20,5 +20,7 @@ public interface PresentationService {
 
     void deleteByDate();
 
+    void deleteTvByPresentation(UUID presentationId, UUID tv);
+
     void deleteByRefNames(List<String> names);
 }
