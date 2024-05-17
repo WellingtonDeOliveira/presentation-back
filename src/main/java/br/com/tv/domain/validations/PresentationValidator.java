@@ -1,4 +1,4 @@
-package br.com.tv.domain.validations.presentation;
+package br.com.tv.domain.validations;
 
 import br.com.tv.domain.models.entities.FilesEntity;
 

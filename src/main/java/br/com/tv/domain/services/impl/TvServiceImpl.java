@@ -72,7 +72,7 @@ public class TvServiceImpl implements TvService {
     public List<GetTvRecordsDTO> getTvWithoutPresentation() {
         List<TvEntity> tvs = tvRepository.findAllTvsWithoutPresentations();
 
-        List<GetTvRecordsDTO> content = tvs.stream().map(tv -> {
+        return tvs.stream().map(tv -> {
             return GetTvRecordsDTO.builder()
                     .id(tv.getId())
                     .campus(tv.getCampus())
@@ -84,7 +84,6 @@ public class TvServiceImpl implements TvService {
                             .build())
                     .build();
         }).toList();
-        return content;
     }
 
     @Transactional

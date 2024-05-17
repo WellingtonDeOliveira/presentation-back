@@ -11,7 +11,7 @@ import br.com.tv.domain.repositories.FilesRepository;
 import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.services.FileService;
 import br.com.base.shared.utils.StringUtil;
-import br.com.tv.domain.validations.presentation.PresentationValidator;
+import br.com.tv.domain.validations.PresentationValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -17,17 +17,15 @@ import br.com.tv.domain.repositories.PresentationLinkTvRepository;
 import br.com.tv.domain.repositories.PresentationRepository;
 import br.com.tv.domain.repositories.TvRepository;
 import br.com.tv.domain.services.PresentationService;
-import br.com.tv.domain.validations.presentation.PresentationValidator;
+import br.com.tv.domain.validations.PresentationValidator;
+import br.com.tv.domain.validations.TvValidator;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,6 +45,7 @@ public class PresentationServiceImpl implements PresentationService {
     private final FilesRepository filesRepository;
     private final PresentationRepository presentationRepository;
     private final TvRepository tvRepository;
+    private final TvValidator tvValidator;
     private final PresentationValidator presentationValidator;
     private final PresentationLinkTvRepository presentationLinkTvRepository;
 
@@ -149,6 +148,7 @@ public class PresentationServiceImpl implements PresentationService {
         });
 
         filesRepository.deleteAllByPresentationId(id);
+        presentationLinkTvRepository.deleteAllByPresentationId(id);
         presentationRepository.deleteById(id);
     }
 
@@ -179,6 +179,7 @@ public class PresentationServiceImpl implements PresentationService {
                 }
             });
             filesRepository.deleteAllByPresentationId(presentation.getId());
+            presentationLinkTvRepository.deleteAllByPresentationId(presentation.getId());
         });
         presentationRepository.deleteAll(presentations);
     }
@@ -235,13 +236,19 @@ public class PresentationServiceImpl implements PresentationService {
         return filesResponse;
     }
 
+    @Transactional
     private void addTvs(PresentationEntity presentation, Set<UUID> tvsId) {
+        List<PresentationLinkTvEntity> links = new ArrayList<>();
         List<TvEntity> tvs = tvRepository.findAllById(tvsId);
         tvs = removeDuplicateRoles(tvs);
-        var newLinks = tvs.stream().map(tv ->
-                new PresentationLinkTvEntity(presentation, tv)
-        ).toList();
-        presentationLinkTvRepository.saveAll(newLinks);
+
+        tvs.forEach(tv -> {
+            if (!tvValidator.thisIsWithoutPresententation(tv.getId()))
+                throw new BusinessException("Essa TV já possui apresentação atribuida!");
+            links.add(new PresentationLinkTvEntity(presentation, tv));
+        });
+
+        presentationLinkTvRepository.saveAll(links);
     }
 
     private List<TvEntity> removeDuplicateRoles(List<TvEntity> tvs) {

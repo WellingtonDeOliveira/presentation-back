@@ -15,4 +15,6 @@ public interface PresentationLinkTvRepository extends JpaRepository<Presentation
             "FROM PresentationLinkTvEntity p " +
             "WHERE tv.id = :id")
     UUID findPresentationIdByTvId(UUID id);
+
+    void deleteAllByPresentationId(UUID id);
 }
