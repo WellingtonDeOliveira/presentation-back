@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Updates TV by presentation",
-        description = "Requires role: " + RoleType.Roles.ROLE_UPDATED_PRESENTATION
+        description = "Requires role: " + RoleType.Roles.ROLE_UPDATED_PRESENTATION_TVS
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_UPDATED_PRESENTATION)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_UPDATED_PRESENTATION_TVS)")
 @RequestMapping(method = RequestMethod.PUT, path = "/tv/{presentationId}", produces = "application/json")
 @OpenApiResponse201
 @OpenApiResponse400

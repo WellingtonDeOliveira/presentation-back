@@ -4,7 +4,7 @@ import br.com.base.shared.annotations.web.ApiController;
 import br.com.base.shared.annotations.web.OpenApiController;
 import br.com.tv.controllers.tv.v1.annotations.GetPresentationByTvEndpoint;
 import br.com.tv.controllers.tv.v1.annotations.GetTvsEndpoint;
-import br.com.tv.controllers.tv.v1.annotations.GetTvsNotPresentationEndpoint;
+import br.com.tv.controllers.tv.v1.annotations.GetTvsWithoutPresentationEndpoint;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetPresentationByTvResponseDTO;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRecordsDTO;
 import br.com.tv.controllers.tv.v1.models.DTOs.GetTvRequestDTO;
@@ -36,7 +36,7 @@ public class TvController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetTvsNotPresentationEndpoint
+    @GetTvsWithoutPresentationEndpoint
     public ResponseEntity<List<GetTvRecordsDTO>> getTvWitchoutPresentation() {
         var response = tvService.getTvWithoutPresentation();
         return new ResponseEntity<>(response, HttpStatus.OK);

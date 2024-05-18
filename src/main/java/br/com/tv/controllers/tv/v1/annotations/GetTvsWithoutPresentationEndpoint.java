@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Get TV without presentation",
-        description = "Requires role: " + RoleType.Roles.ROLE_GET_ALL_TVS
+        description = "Requires role: " + RoleType.Roles.ROLE_GET_ALL_TVS_WITHOUT_PRESENTATION
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_GET_ALL_TVS)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_GET_ALL_TVS_WITHOUT_PRESENTATION)")
 @RequestMapping(method = RequestMethod.GET, path = "/presentation", produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse400
@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @OpenApiResponse403
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GetTvsNotPresentationEndpoint {
+public @interface GetTvsWithoutPresentationEndpoint {
 }

@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 
 @Operation(
         summary = "Delete TV by Presentation",
-        description = "Requires role: " + RoleType.Roles.ROLE_DELETE_PRESENTATION
+        description = "Requires role: " + RoleType.Roles.ROLE_DELETE_TV_BY_PRESENTATION
 )
-@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_DELETE_PRESENTATION)")
+@PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_DELETE_TV_BY_PRESENTATION)")
 @RequestMapping(method = RequestMethod.DELETE, path = "/tv/{presentationId}", produces = "application/json")
 @OpenApiResponse200
 @OpenApiResponse401
