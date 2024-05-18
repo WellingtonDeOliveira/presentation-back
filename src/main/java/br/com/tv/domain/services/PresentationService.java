@@ -4,6 +4,7 @@ import br.com.tv.controllers.presentation.v1.models.DTOs.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface PresentationService {
@@ -20,7 +21,9 @@ public interface PresentationService {
 
     void deleteByDate();
 
-    void deleteTvByPresentation(UUID presentationId, UUID tv);
+    void deleteTvByPresentation(UUID presentationId, UUID tv) throws Exception;
+
+    void updatedTvPresentation(UUID presentationId, Set<UUID> tv);
 
     void deleteByRefNames(List<String> names);
 }

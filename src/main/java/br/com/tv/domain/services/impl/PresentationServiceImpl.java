@@ -188,10 +188,19 @@ public class PresentationServiceImpl implements PresentationService {
 
     @Override
     @Transactional
-    public void deleteTvByPresentation(UUID presentationId, UUID tvId) {
+    public void deleteTvByPresentation(UUID presentationId, UUID tvId) throws Exception {
         logger.info("Deleting TV with ID {} from presentation with ID {}", tvId, presentationId);
-        presentationLinkTvRepository.deleteByPresentationIdAndTvId(presentationId, tvId);
-        logger.info("Deletion completed");
+        try {
+            presentationLinkTvRepository.deleteByPresentationIdAndTvId(presentationId, tvId);
+            logger.info("Deletion completed");
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public void updatedTvPresentation(UUID presentationId, Set<UUID> tv) {
+        addTvs(findById(presentationId), tv);
     }
 
     private List<GetTvRecordsDTO> getTvRecordsDTOS(PresentationEntity presentation) {

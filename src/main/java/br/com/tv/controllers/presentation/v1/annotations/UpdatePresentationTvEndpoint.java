@@ -13,11 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Operation(
-        summary = "Updates name by presentation",
+        summary = "Updates TV by presentation",
         description = "Requires role: " + RoleType.Roles.ROLE_UPDATED_PRESENTATION
 )
 @PreAuthorize("hasAnyRole(T(br.com.base.shared.models.enums.RoleType).ROLE_UPDATED_PRESENTATION)")
-@RequestMapping(method = RequestMethod.PUT, path = "/{id}", produces = "application/json")
+@RequestMapping(method = RequestMethod.PUT, path = "/tv/{presentationId}", produces = "application/json")
 @OpenApiResponse201
 @OpenApiResponse400
 @OpenApiResponse401
@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @OpenApiResponse404
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UpdatePresentationEndpoint {
+public @interface UpdatePresentationTvEndpoint {
 }
