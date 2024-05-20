@@ -53,8 +53,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public GetFileResponseDTO getById(UUID id) {
         FilesEntity file = findById(id);
-        PresentationEntity presentation = presentationRepository.findById(file.getPresentation().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrado!"));
+        PresentationEntity presentation = findPresentationById(file.getPresentation().getId());
+
         try {
             return GetFileResponseDTO.builder()
                     .id(file.getId())
@@ -99,6 +99,8 @@ public class FileServiceImpl implements FileService {
     public void uploadToDirectory(UUID idPresentation, FileRequestDTO request) {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
+        PresentationEntity presentation = findPresentationById(idPresentation);
+
         try {
             String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             Path directoryPath = Paths.get(uploadDir, currentDate);
@@ -112,6 +114,7 @@ public class FileServiceImpl implements FileService {
                 String ref = UUID.randomUUID() + "_" + file.getName() + extension;
 
                 presentationValidator.validateForExtensions(extension);
+                presentationValidator.validateForTypePresentation(extension, presentation);
 
                 Files.copy(file.getInputStream(), directoryPath.resolve(ref), StandardCopyOption.REPLACE_EXISTING);
                 entities.add(FilesEntity
@@ -120,7 +123,7 @@ public class FileServiceImpl implements FileService {
                         .presentation(PresentationEntity.builder().id(idPresentation).build())
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
                         .ref(ref)
-                        .type(file.getContentType())
+                        .type(extension)
                         .build()
                 );
             }
@@ -159,6 +162,11 @@ public class FileServiceImpl implements FileService {
 
     private FilesEntity findById(UUID id) {
         return filesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Arquivo não encontrado: " + id));
+    }
+
+    private PresentationEntity findPresentationById(UUID id) {
+        return presentationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrado!"));
     }
 
     @SuppressWarnings("unchecked")

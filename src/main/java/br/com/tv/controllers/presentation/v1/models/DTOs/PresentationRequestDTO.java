@@ -17,6 +17,7 @@ public record PresentationRequestDTO (
         @Schema(description = "list by tvs id", example = "[\"00000000-0000-0000-0000-000000000000\"]") @NotBlank @NotEmpty Set<UUID> tvsId,
         @Schema(description = "Name Presentation", example = "Apresentação") @NotBlank @NotEmpty String name,
         @Schema(description = "Time in seconds", example = "10") @NotBlank @Size(max = 2) @NotEmpty String time,
+        @Schema(description = "Tipo de apresentação", example = "imagem/video") @NotBlank @NotEmpty String type,
         @Schema(description = "Date to delete", example = "2000-01-01T00:00:00Z") @NotBlank @NotEmpty OffsetDateTime deletedAt,
         @Schema(description = "-.", example = "MultipatFile[]") List<MultipartFile> files) {
 }

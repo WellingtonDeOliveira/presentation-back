@@ -3,6 +3,7 @@ package br.com.tv.domain.services.impl;
 import br.com.base.authentication.domain.models.entities.UserEntity;
 import br.com.base.shared.exceptions.BusinessException;
 import br.com.base.shared.exceptions.EntityNotFoundException;
+import br.com.base.shared.models.enums.AllowedExtension;
 import br.com.base.shared.utils.DateTimeUtil;
 import br.com.base.shared.utils.StringUtil;
 import br.com.tv.controllers.files.v1.models.DTOs.GetFileResponseDTO;
@@ -90,9 +91,7 @@ public class PresentationServiceImpl implements PresentationService {
             String ref = UUID.randomUUID() + "_" + file.getName() + extension;
 
             presentationValidator.validateForExtensions(extension);
-
-            // Fazer o front escolher se é video ou imagem e tirar essa linha.
-            presentation.setType(extension.equals(".mp4") ? "video" : "imagem");
+            presentationValidator.validateForTypePresentation(extension, presentation);
             try {
                 Files.copy(file.getInputStream(), directoryPath.resolve(ref), StandardCopyOption.REPLACE_EXISTING);
                 entities.add(FilesEntity
@@ -289,6 +288,7 @@ public class PresentationServiceImpl implements PresentationService {
         return PresentationEntity.builder()
                 .name(request.name())
                 .time(request.time())
+                .type(request.type())
                 .deletedAt(request.deletedAt())
                 .build();
     }
