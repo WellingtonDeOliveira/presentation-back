@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,16 +62,29 @@ public class PresentationServiceImpl implements PresentationService {
     public void create(PresentationRequestDTO request) throws IOException {
         UserEntity loggedUser = getLoggedUser();
         List<FilesEntity> entities = new ArrayList<>();
-
+        List<TvEntity> tvs = tvRepository.findAllById(request.tvsId());
         String currentDate = DateTimeUtil.nowZoneUTC().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         Path directoryPath = Paths.get(uploadDir, currentDate);
-
-        if (!Files.exists(directoryPath))
-            Files.createDirectories(directoryPath);
-
         PresentationEntity presentation = buildPresentation(request);
 
-        request.files().forEach(file -> {
+        tvs.forEach(tv -> tvValidator.thisIsWithoutPresententation(tv.getId()));
+        tvValidator.listTvsIsEmpty(tvs);
+        if (!Files.exists(directoryPath)) Files.createDirectories(directoryPath);
+
+        entities.addAll(uploadAndCreateEntityFile(request.files(), entities, presentation, directoryPath, loggedUser));
+
+        presentationRepository.save(presentation);
+        filesRepository.saveAll(entities);
+        addTvs(presentation, tvs);
+    }
+
+    @Transactional
+    private List<FilesEntity> uploadAndCreateEntityFile(List<MultipartFile> files,
+                                                        List<FilesEntity> entities,
+                                                        PresentationEntity presentation,
+                                                        Path directoryPath,
+                                                        UserEntity loggedUser) {
+        files.forEach(file -> {
             String name = file.getOriginalFilename();
             String extension = Objects.requireNonNull(name).substring(name.lastIndexOf('.'));
             String ref = UUID.randomUUID() + "_" + file.getName() + extension;
@@ -87,7 +101,7 @@ public class PresentationServiceImpl implements PresentationService {
                         .presentation(presentation)
                         .user(UserEntity.builder().id(loggedUser.getId()).build())
                         .ref(ref)
-                        .type(file.getContentType())
+                        .type(extension)
                         .build()
                 );
             } catch (Exception e) {
@@ -95,9 +109,7 @@ public class PresentationServiceImpl implements PresentationService {
                 throw new BusinessException(e.getMessage());
             }
         });
-        presentationRepository.save(presentation);
-        filesRepository.saveAll(entities);
-        addTvs(presentation, request.tvsId());
+        return entities;
     }
 
     @Override
@@ -199,8 +211,12 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
-    public void updatedTvPresentation(UUID presentationId, Set<UUID> tv) {
-        addTvs(findById(presentationId), tv);
+    public void updatedTvPresentation(UUID presentationId, Set<UUID> tvId) {
+        List<TvEntity> tvs = tvRepository.findAllById(tvId);
+        tvs.forEach(tv -> tvValidator.thisIsWithoutPresententation(tv.getId()));
+        tvValidator.listTvsIsEmpty(tvs);
+
+        addTvs(findById(presentationId), tvs);
     }
 
     private List<GetTvRecordsDTO> getTvRecordsDTOS(PresentationEntity presentation) {
@@ -256,16 +272,11 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Transactional
-    private void addTvs(PresentationEntity presentation, Set<UUID> tvsId) {
+    private void addTvs(PresentationEntity presentation, List<TvEntity> tvs) {
         List<PresentationLinkTvEntity> links = new ArrayList<>();
-        List<TvEntity> tvs = tvRepository.findAllById(tvsId);
         tvs = removeDuplicateRoles(tvs);
 
-        tvs.forEach(tv -> {
-            if (!tvValidator.thisIsWithoutPresententation(tv.getId()))
-                throw new BusinessException("Essa TV já possui apresentação atribuida!");
-            links.add(new PresentationLinkTvEntity(presentation, tv));
-        });
+        tvs.forEach(tv -> links.add(new PresentationLinkTvEntity(presentation, tv)));
 
         presentationLinkTvRepository.saveAll(links);
     }

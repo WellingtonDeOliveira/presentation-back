@@ -52,8 +52,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public GetFileResponseDTO getById(UUID id) {
-        FilesEntity file = filesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Arquivo não encontrado!"));
+        FilesEntity file = findById(id);
         PresentationEntity presentation = presentationRepository.findById(file.getPresentation().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Apresentação não encontrado!"));
         try {
