@@ -1,9 +1,9 @@
 api:
   security:
     jwt:
-      secret-key: ${JWT_SECRET_KEY:0986430@753776789!1208@948741157}
-      expiration: ${JWT_EXPIRATION:86400000}
-      issuer: ${JWT_ISSUER:tv-project-api}
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION}
+      issuer: ${JWT_ISSUER}
 
 upload:
   dir: src/main/resources/files/
@@ -17,9 +17,9 @@ spring:
       max-file-size: 6MB
       max-request-size: 60MB
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/tvspring}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:root}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -42,6 +42,3 @@ springdoc:
     tagsSorter: alpha
     operationsSorter: method
     doc-expansion: none
-
-
-
