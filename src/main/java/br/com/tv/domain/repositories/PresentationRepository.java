@@ -22,7 +22,7 @@ public interface PresentationRepository extends JpaRepository<PresentationEntity
             + "INNER JOIN t.tv tv "
             + "WHERE "
             + "    (:search is null or lower(p.name) like :search) "
-            + " or (:search is null or lower(tv.campus) like :search) " )
+            + " or (:search is null or lower(tv.department) like :search) " )
     Page<PresentationEntity> search(@Param("search") String search, Pageable pageable);
 
     List<PresentationEntity> findAllByDeletedAtBefore(OffsetDateTime currentDateTime);

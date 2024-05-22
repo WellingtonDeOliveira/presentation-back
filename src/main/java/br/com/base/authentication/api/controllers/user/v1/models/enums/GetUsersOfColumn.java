@@ -5,7 +5,7 @@ import br.com.base.shared.models.enums.SortColumn;
 public enum GetUsersOfColumn implements SortColumn {
     id("id"),
     createdAt("createdAt"),
-    campus("campus"),
+    department("department"),
     updatedAt("updatedAt"),
     username("username");
 

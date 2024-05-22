@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>br.com</groupId>
-    <artifactId>spring-boot-base-project</artifactId>
+    <artifactId>spring-boot-presentation-project</artifactId>
     <version>0.0.1</version>
-    <name>spring-boot-base-project</name>
-    <description>Spring Boot base project</description>
+    <name>spring-boot-presentation-project</name>
+    <description>Spring Boot Presentation Project</description>
 
     <properties>
         <java.version>17</java.version>

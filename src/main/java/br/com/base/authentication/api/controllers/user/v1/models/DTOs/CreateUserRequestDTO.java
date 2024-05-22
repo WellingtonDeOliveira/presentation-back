@@ -21,10 +21,10 @@ public record CreateUserRequestDTO(
         @Schema(description = "Password.", example = "password")
         @ValidPassword
         String password,
-        @Schema(description = "Campus.", example = "Fortaleza")
+        @Schema(description = "Department.", example = "Fortaleza")
         @NotEmpty
         @NotBlank
         @Length(min = 3, max = 20)
-        String campus
+        String department
 ) {
 }

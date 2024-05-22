@@ -19,7 +19,7 @@ public interface TvRepository extends JpaRepository<TvEntity, UUID> {
             + "FROM TvEntity tv "
             + "WHERE "
             + "    (:search is null or lower(tv.name) like :search) "
-            + " or (:search is null or lower(tv.campus) like :search) ")
+            + " or (:search is null or lower(tv.department) like :search) ")
     Page<TvEntity> search(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT tv " +

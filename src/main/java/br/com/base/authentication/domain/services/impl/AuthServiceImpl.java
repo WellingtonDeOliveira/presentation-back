@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .nickname(user.getUsername())
                 .name(user.getName())
-                .campus(user.getCampus())
+                .department(user.getDepartment())
                 .roles(user.getAllRoles())
                 .groups(user.getGroupsNames())
                 .build();

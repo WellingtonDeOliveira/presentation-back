@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
             + "FROM UserEntity u "
             + "WHERE "
             + "    (:search is null or lower(u.username) like :search) "
-            + " or (:search is null or lower(u.campus) like :search) ")
+            + " or (:search is null or lower(u.department) like :search) ")
     Page<UserEntity> search(@Param("search") String search, Pageable pageable);
 
     Optional<UserEntity> findByUsername(String username);

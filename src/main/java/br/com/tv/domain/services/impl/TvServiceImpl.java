@@ -75,7 +75,7 @@ public class TvServiceImpl implements TvService {
         return tvs.stream().map(tv -> {
             return GetTvRecordsDTO.builder()
                     .id(tv.getId())
-                    .campus(tv.getCampus())
+                    .department(tv.getDepartment())
                     .name(tv.getName())
                     .createdAt(tv.getCreatedAt())
                     .user(UserAssociatedByTvRecordDTO.builder()
@@ -99,7 +99,7 @@ public class TvServiceImpl implements TvService {
                                 )
                                 .createdAt(tv.getCreatedAt())
                                 .name(tv.getName())
-                                .campus(tv.getCampus())
+                                .department(tv.getDepartment())
                                 .build();
                 }).toList();
         var page = new PageImpl<>(content, result.getPageable(), result.getTotalElements());

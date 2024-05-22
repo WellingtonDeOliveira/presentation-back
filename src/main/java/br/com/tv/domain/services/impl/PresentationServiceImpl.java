@@ -223,7 +223,7 @@ public class PresentationServiceImpl implements PresentationService {
             TvEntity tv = linkTv.getTv();
             return GetTvRecordsDTO.builder()
                     .id(tv.getId())
-                    .campus(tv.getCampus())
+                    .department(tv.getDepartment())
                     .name(tv.getName())
                     .createdAt(tv.getCreatedAt())
                     .build();

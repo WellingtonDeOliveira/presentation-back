@@ -21,8 +21,8 @@ public class TvEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "campus", nullable = false)
-    private String campus;
+    @Column(name = "department", nullable = false)
+    private String department;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
@@ -30,10 +30,10 @@ public class TvEntity extends BaseEntity {
 
     @Builder
     public TvEntity(UUID id, OffsetDateTime createdAt,
-                      OffsetDateTime updatedAt, String name, String campus, UserEntity user) {
+                      OffsetDateTime updatedAt, String name, String department, UserEntity user) {
         super(id, createdAt, updatedAt);
         this.name = name;
-        this.campus = campus;
+        this.department = department;
         this.user = user;
     }
 }

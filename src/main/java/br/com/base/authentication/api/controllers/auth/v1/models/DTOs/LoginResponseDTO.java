@@ -16,8 +16,8 @@ public record LoginResponseDTO(
         String nickname,
         @Schema(description = "Name", example = "Name")
         String name,
-        @Schema(description = "Campus", example = "Fortaleza")
-        String campus,
+        @Schema(description = "Department", example = "Fortaleza")
+        String department,
         @Schema(description = "Roles", example = "[\"WRITE\"]")
         Set<RoleType> roles,
         @Schema(description = "Groups", example = "[\"Management\"]")

@@ -32,8 +32,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String name;
     @Column(name = "password", nullable = false, length = 200)
     private String password;
-    @Column(name = "campus", nullable = false, length = 20)
-    private String campus;
+    @Column(name = "department", nullable = false, length = 20)
+    private String department;
     @Column(name = "deleted_at", nullable = false)
     protected OffsetDateTime deletedAt;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
@@ -46,7 +46,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
         super.id = builder.id;
         this.username = builder.username;
         this.name = builder.name;
-        this.campus = builder.campus;
+        this.department = builder.department;
         this.password = builder.password;
         this.roles = builder.roles;
         this.groups = builder.groups;
@@ -115,7 +115,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
         private String name;
         private String password;
         private OffsetDateTime deletedAt;
-        private String campus;
+        private String department;
         private Set<UserLinkRoleEntity> roles;
         private Set<UserLinkGroupRoleEntity> groups;
 
@@ -137,8 +137,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
             return this;
         }
 
-        public Builder campus(String campus) {
-            this.campus = campus;
+        public Builder department(String department) {
+            this.department = department;
             return this;
         }
 

@@ -6,7 +6,7 @@ public enum GetTvOfColumns implements SortColumn {
     id("id"),
     createdAt("createdAt"),
     name("name"),
-    campus("campus");
+    department("department");
 
     private final String column;
 

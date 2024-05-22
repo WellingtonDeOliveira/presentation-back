@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         TvEntity tv = TvEntity.builder()
                 .name(user.getName())
                 .user(user)
-                .campus(user.getCampus())
+                .department(user.getDepartment())
                 .build();
         tvRepository.save(tv);
     }
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
                 .username(request.username())
                 .name(request.name())
                 .password(passwordEncoder.encode(request.password()))
-                .campus(request.campus())
+                .department(request.department())
                 .build();
         userRepository.save(user);
     }
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
                 .map(user -> GetUserRecordsDTO.builder()
                         .userId(user.getId())
                         .username(user.getUsername())
-                        .campus(user.getCampus())
+                        .department(user.getDepartment())
                         .groups(user.getGroupsNames())
                         .deletedAt(user.getDeletedAt())
                         .build()).toList();
