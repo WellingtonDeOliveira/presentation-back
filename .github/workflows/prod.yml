@@ -37,4 +37,4 @@ jobs:
         run: docker push olliverzx/postgresql:latest
 
       - name: Run Docker Container
-        run: docker run -d -p 8080:8080 --name postgresql olliverzx/postgresql
+        run: docker run -d -p 8080:8080 --name deploy_presentaion_actions olliverzx/postgresql
