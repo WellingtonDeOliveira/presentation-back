@@ -28,3 +28,13 @@ jobs:
 
       - name: Push Image Docker
         run: docker push olliverzx/postgresql
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull Image From Docker Hub
+        run: docker push olliverzx/postgresql:latest
+
+      - name: Run Docker Container
+        run: docker run -d -p 8080:8080 --name postgresql olliverzx/postgresql
