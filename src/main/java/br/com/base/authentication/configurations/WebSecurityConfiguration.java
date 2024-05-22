@@ -32,8 +32,8 @@ public class WebSecurityConfiguration {
             "*/users/create",
             "/v3/api-docs.yaml",
             "/v3/api-docs/**",
-            "**/swagger-ui/**",
-            "**/swagger-ui.html"
+            "*/swagger-ui/**",
+            "*/swagger-ui.html"
     };
 
     public WebSecurityConfiguration(SecurityFilter securityFilter, AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) {
