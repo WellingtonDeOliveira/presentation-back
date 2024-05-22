@@ -34,7 +34,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Image From Docker Hub
-        run: docker push olliverzx/postgresql:latest
+        run: docker pull olliverzx/postgresql:latest
 
       - name: Run Docker Container
         run: docker run -d -p 8080:8080 --name deploy_presentaion_actions olliverzx/postgresql
